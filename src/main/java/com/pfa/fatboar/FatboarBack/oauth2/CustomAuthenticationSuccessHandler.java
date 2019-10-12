@@ -1,6 +1,8 @@
 package com.pfa.fatboar.FatboarBack.oauth2;
 
 import com.pfa.fatboar.FatboarBack.controllers.TicketController;
+import com.pfa.fatboar.FatboarBack.exception.AppException;
+import com.pfa.fatboar.FatboarBack.exception.ResourceNotFoundException;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
@@ -40,7 +42,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
         Map<String, Object> attributes = oidcUser.getAttributes();
         String email = (String) attributes.get("email");
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException("User with email not found"));
         String token = jwtTokenUtil.generateToken(user);
         String redirectionUrl = UriComponentsBuilder.fromUriString(homeUrl)
                 .queryParam("auth_token", token)

@@ -1,8 +1,11 @@
 package com.pfa.fatboar.FatboarBack.services;
 
 import com.pfa.fatboar.FatboarBack.controllers.TicketController;
+import com.pfa.fatboar.FatboarBack.exception.ResourceNotFoundException;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
+import com.pfa.fatboar.FatboarBack.security.CurrentUser;
+import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,6 @@ public class UserService {
 
     public static final Logger logger = LoggerFactory.getLogger(TicketController.class);
 
-
     @Autowired
     UserRepository userRepository;
 
@@ -29,13 +31,13 @@ public class UserService {
     }
 
     /**
-     * It retrieves the sub identifiant of the logged in user
-     * @return loggedInSub
+     * It retrieves the user logged in
+     * @return User user
      */
-    public String getTheSubOfTheActualLoggedInUser(Principal principal) {
-        //Principal principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        logger.info("Sub of the actual logged in user returned");
-        return principal.getName();
+    public User loggedInUser(@CurrentUser UserPrincipal userPrincipal) {
+        logger.info("Actual logged in user returned");
+        return userRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }
 
     public List<User> getUsers() {

@@ -1,5 +1,6 @@
 package com.pfa.fatboar.FatboarBack.services;
 
+import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
@@ -32,7 +33,10 @@ public class TicketService {
      */
     public Ticket getTicket(int ticketNumber) {
         return ticketRepository.findTicketByTicketNumber(ticketNumber);
+    }
 
+    public Ticket insertTickets(Ticket ticket) {
+        return ticketRepository.save(ticket);
     }
 
     /**
@@ -42,7 +46,7 @@ public class TicketService {
      * This method handle the ticket number submission
      */
     @Transactional
-    public void handleTicketSubmission(int number) throws Exception {
+    public String handleTicketSubmission(int number) throws Exception {
         //Verifications
         Ticket ticket = getTicket(number);
         if (ticket == null) {
@@ -52,11 +56,13 @@ public class TicketService {
             //String loggedInUsername = userService.getLoggedInUsername();
             //Just for test purposes --> to be deleted once done and uncomment line under
             String loggedInUsername = "Amira Khamassi";
-            User userLoggedIn = userRepository.findByUsername(loggedInUsername);
+            User userLoggedIn = userRepository.findByUsernameOrEmail(loggedInUsername,loggedInUsername)
+                    .orElseThrow(() -> new AppException("user not found"));
             ticket.setUser(userLoggedIn.getId());
             //state 1 means that the ticket is well associated to a user and its gain is not yet consumed
             ticket.setState(1);
             ticketRepository.save(ticket);
+            return ticket.getGain().getLabel();
         }
     }
 }

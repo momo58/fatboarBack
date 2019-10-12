@@ -1,5 +1,6 @@
-package com.pfa.fatboar.FatboarBack.config;
+package com.pfa.fatboar.FatboarBack.security;
 
+import com.pfa.fatboar.FatboarBack.services.ServiceImpl.CustomUserDetailsService;
 import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -24,7 +25,7 @@ import static com.pfa.fatboar.FatboarBack.common.Constants.TOKEN_PARAM;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private CustomUserDetailsService userDetailsService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;

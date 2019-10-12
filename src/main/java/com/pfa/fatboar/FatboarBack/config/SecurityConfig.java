@@ -1,6 +1,10 @@
 package com.pfa.fatboar.FatboarBack.config;
 
+import com.pfa.fatboar.FatboarBack.models.RoleName;
 import com.pfa.fatboar.FatboarBack.oauth2.CustomAuthenticationSuccessHandler;
+import com.pfa.fatboar.FatboarBack.security.JwtAuthenticationEntryPoint;
+import com.pfa.fatboar.FatboarBack.security.JwtAuthenticationFilter;
+import com.pfa.fatboar.FatboarBack.services.ServiceImpl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -45,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .userDetailsService(userDetailsService)
+                .userDetailsService(customUserDetailsService)
                 .passwordEncoder(encoder());
     }
 
@@ -56,14 +60,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().
-                antMatchers("/auth/**", "/webjars/**","/api/tickets/yourtickets","/username").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-                .and()
+                 http.authorizeRequests()
+                .antMatchers("/api/tickets/**","/api/auth/**","/api/**").permitAll()
+                .antMatchers("/api/auth/**").hasRole("ADMIN")
+                .anyRequest()
+                         .authenticated()
+                         .and()
+                         .csrf().disable()
+                         .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                 .and()
                 .oauth2Login()
-                .loginPage("/auth/custom-login")
                 .redirectionEndpoint()
                 .baseUri("/oauth2/callback/*")
                 .and()

@@ -1,8 +1,12 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
+import com.pfa.fatboar.FatboarBack.exception.AppException;
+import com.pfa.fatboar.FatboarBack.models.Gain;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
+import com.pfa.fatboar.FatboarBack.security.CurrentUser;
+import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 import com.pfa.fatboar.FatboarBack.services.TicketService;
 import com.pfa.fatboar.FatboarBack.services.UserService;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
@@ -18,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,37 +40,44 @@ public class TicketController {
     @Autowired
     UserRepository userRepository;
 
-    @PostMapping("/handling_tickets")
-    public ResponseEntity<String> handleFormTicketSubmission(@ModelAttribute("ticket")Ticket ticket) throws Exception {
+    @PostMapping("/handlingpost")
+    public ResponseEntity<String> handlePostFormTicketSubmission(@RequestBody Ticket ticket) throws Exception {
+        String gain = "";
         try {
-            int current = ticket.getTicketNumber();
-            ticketService.handleTicketSubmission(current);
+            gain = ticketService.handleTicketSubmission(ticket.getTicketNumber());
         }
         catch(Exception e) {
             e.getMessage();
         }
-        return new ResponseEntity<>("Test return", HttpStatus.OK);
+        return new ResponseEntity<String>(gain, HttpStatus.OK);
     }
 
     /**
-     * Returns the tickets of the loggedin user
+     * Returns -for a user logged in- the history of all its gains validated by the restaurant's employee
+     * NB: think about adding the similar gains and returning a map with key ( The number of times gain )
+     * and value the label of the gain
+     * @param userPrincipal
      * @return
      */
-    @GetMapping("/yourtickets")
-    public ResponseEntity<List<Ticket>> getUserTickets(Principal principal) {
-        String sub = userService.getTheSubOfTheActualLoggedInUser(principal);
-        logger.info("sub: ", sub);
-        User userLoggedIn = userRepository.findBySub(sub);
-        logger.info("user: ", userLoggedIn);
+    @GetMapping("/gainhistory")
+    public ResponseEntity<List<String>> getUserGains(@CurrentUser UserPrincipal userPrincipal) {
+        List<String > gains = new ArrayList<>();
+        User userLoggedIn = userService.loggedInUser(userPrincipal);
+
         if (userLoggedIn != null) {
             List<Ticket> tickets = userLoggedIn.getTickets();
+
             if (tickets.isEmpty()) {
                 logger.info("There is no tickets");
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
-            return new ResponseEntity<List<Ticket>>(tickets, HttpStatus.OK);
+            for (Ticket t : tickets) {
+                gains.add(t.getGain().getLabel());
+            }
+            return new ResponseEntity<List<String>>(gains, HttpStatus.OK);
         }
         logger.info("There is no user");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }
+

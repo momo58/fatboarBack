@@ -1,6 +1,7 @@
 package com.pfa.fatboar.FatboarBack.oauth2;
 
 import com.pfa.fatboar.FatboarBack.dto.GoogleOAuth2UserInfo;
+import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import org.hibernate.usertype.UserType;
@@ -42,7 +43,8 @@ public class CustomOidcUserService extends OidcUserService {
     }
 
     private void updateUser(GoogleOAuth2UserInfo userInfo) {
-        User user = userRepository.findByEmail(userInfo.getEmail());
+        User user = userRepository.findByEmail(userInfo.getEmail())
+                .orElseThrow(() -> new AppException("No user found"));
         if(user == null) {
             user = new User();
         }

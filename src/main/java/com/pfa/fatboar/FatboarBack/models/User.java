@@ -7,6 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,24 +22,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 40)
     private String username;
 
     private String password;
 
-    @NotBlank
-    @Size(max = 100)
     private String sub;
 
-    @NaturalId
-    @NotBlank
-    @Size(max = 40)
-    @Email
     private String email;
 
-    @NotBlank
-    @Size(max = 100)
     private String imageUrl;
 
     //@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -46,13 +37,20 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<Ticket> tickets;
 
+    @ManyToMany
+    @JoinTable(name = "user_roles",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
     public User() {
     }
 
-    public User(@NotBlank @Size(max = 40) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String imageUrl) {
+
+    public User(@NotBlank @Size(max = 40) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String password) {
         this.username = username;
         this.email = email;
-        this.imageUrl = imageUrl;
+        this.password = password;
     }
 
     public User(@NotBlank @Size(max = 40) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String imageUrl, List<Ticket> tickets) {
@@ -116,5 +114,13 @@ public class User {
 
     public void setSub(String sub) {
         this.sub = sub;
+    }
+
+     public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
