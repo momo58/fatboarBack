@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Build & Unit tests') { 
             steps {
-                sh 'mvn clean verify -DskipITs=true' 
+                sh 'mvn -B -DskipTests clean package'
             }
         }
     }
