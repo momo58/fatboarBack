@@ -1,6 +1,8 @@
 Création d'une BDD avec:
 
 spring.datasource.url=jdbc:mysql://localhost:3306/springboot?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+
+
 spring.datasource.username=springuser
 spring.datasource.password=springuser
 
