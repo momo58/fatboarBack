@@ -1,5 +1,6 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
+import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.exception.ResourceNotFoundException;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
@@ -56,17 +57,18 @@ public class UserController {
        return userService.loggedInUser(userPrincipal);
     }
 
-    @GetMapping("/mailing")
-    public ResponseEntity<?> getUsersEmails() {
-        List<String> emails = new ArrayList<>();
-        List<User> users = userService.getUsers();
-
-        if (users.isEmpty()) {
+    /**
+     * Returns the user who win for the Evoque
+     * NB: to correct with only users with rolename client and I have to config the detail when I save a new G/FB user
+     * @return
+     */
+    @GetMapping("youwin")
+    public ResponseEntity<?> youWin() {
+        try {
+            User theWinner = userService.getTheUserWhoWin();
+            return ResponseEntity.status(HttpStatus.OK).body(theWinner);
+        } catch (AppException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
-        for (User u : users) {
-           emails.add(u.getEmail());
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(emails);
     }
 }

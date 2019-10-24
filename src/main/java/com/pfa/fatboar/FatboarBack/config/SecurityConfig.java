@@ -61,8 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     @Override
     protected void configure(HttpSecurity http) throws Exception {
                  http.authorizeRequests()
-                .antMatchers("/api/tickets/**","/api/auth/**","/api/**").permitAll()
-                .antMatchers("/api/auth/**").hasRole("ADMIN")
+                .antMatchers("/api/tickets/**","/api/auth/**","/api/**","/admin/**").permitAll()
+                .antMatchers("/api/auth/signup").hasRole("ADMIN")
                 .anyRequest()
                          .authenticated()
                          .and()

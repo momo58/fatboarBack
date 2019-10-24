@@ -7,5 +7,6 @@ public class Constants {
     public static final String TOKEN_SECRET = "926D96C90030DD58429D2751AC1BDBBC";
     public static final int TOKEN_EXPIRATION_MSEC = 864000000;
     public static final String homeUrl = "http://localhost:8080/home";
-    public  static final String frontUrl = "http://localhost:4200";
+    public static final String frontUrl = "http://localhost:4200";
+    public static final int TOTAL_TICKETS = 10000;
 }

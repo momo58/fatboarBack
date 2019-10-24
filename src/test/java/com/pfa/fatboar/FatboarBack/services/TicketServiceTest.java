@@ -31,7 +31,7 @@ public class TicketServiceTest {
         Ticket ticket = new Ticket(12345678, 35, 0, null, gain);
     }
 
-    @Test
+    /*@Test
     public void testHandleSubmissionTicket() throws Exception{
         ticketService.handleTicketSubmission(12345678);
 
@@ -39,5 +39,5 @@ public class TicketServiceTest {
 
         assertThat(stateAfterModif)
                 .isEqualTo(1);
-    }
+    }*/
 }

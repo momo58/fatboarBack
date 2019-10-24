@@ -40,11 +40,17 @@ public class TicketController {
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * Processes the ticket number submission by the client on the site
+     * @param ticket
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/handlingpost")
-    public ResponseEntity<String> handlePostFormTicketSubmission(@RequestBody Ticket ticket) throws Exception {
+    public ResponseEntity<String> handlePostFormTicketSubmission(@RequestBody Ticket ticket, @CurrentUser UserPrincipal userPrincipal) throws Exception {
         String gain = "";
         try {
-            gain = ticketService.handleTicketSubmission(ticket.getTicketNumber());
+            gain = ticketService.handleTicketSubmission(ticket.getTicketNumber(),userPrincipal);
         }
         catch(Exception e) {
             e.getMessage();
@@ -72,7 +78,9 @@ public class TicketController {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
             for (Ticket t : tickets) {
-                gains.add(t.getGain().getLabel());
+                if (t.getState() == 2) {
+                    gains.add(t.getGain().getLabel());
+                }
             }
             return new ResponseEntity<List<String>>(gains, HttpStatus.OK);
         }

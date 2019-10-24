@@ -16,6 +16,10 @@ public class Ticket {
 
     private float value;
 
+    /*
+    * 0: ticket created on DB
+    * 1: ticket validated by the client
+    * 2: ticket validated by the restaurant employee */
     private int state;
 
     //@ManyToOne

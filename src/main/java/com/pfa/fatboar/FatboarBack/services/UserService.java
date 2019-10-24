@@ -1,6 +1,7 @@
 package com.pfa.fatboar.FatboarBack.services;
 
 import com.pfa.fatboar.FatboarBack.controllers.TicketController;
+import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.exception.ResourceNotFoundException;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class UserService {
@@ -42,5 +45,40 @@ public class UserService {
 
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    public List<String> getUsersEmails() {
+        List<String> emails = new ArrayList<>();
+
+        List<User> users = getUsers();
+
+        if (users.isEmpty()) {
+            throw new AppException("There is nu user !");
+        }
+        for (User u : users) {
+            emails.add(u.getEmail());
+        }
+        return emails;
+    }
+
+    /**
+     * Returns the user who win the evoque
+     * @return
+     */
+    public User getTheUserWhoWin() {
+        //sur une liste d'id je sélectionne aléatoirement un
+        //recupérer la liste d'id des users dans la base
+        Random random = new Random();
+        List<User> users = userRepository.findAll();
+
+        User winner = users.get(random.nextInt(users.size()));
+
+        return winner;
+       /* List<Long> usersIds = new ArrayList<>();
+        for (User u : users) {
+            usersIds.add(u.getId());
+        }
+
+        usersIds.forEach(u -> System.out.println(u));*/
     }
 }
