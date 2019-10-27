@@ -3,12 +3,17 @@ def CONTAINER_TAG = "latest"
 
 pipeline {
     agent any
+    parameters {
+
+    }
     stages {
         stage('Initialize') {
             steps {
-                def dockerHome = tool 'myDocker'
-                def mavenHome  = tool 'myMaven'
-                env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+               script {
+                     def dockerHome = tool 'myDocker'
+                     def mavenHome  = tool 'myMaven'
+                     env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+               }
             }
         }
 
