@@ -2,18 +2,21 @@ def CONTAINER_NAME = "jenkins-pipeline"
 def CONTAINER_TAG = "latest"
 
 pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine' 
-            args '-v /root/.m2:/root/.m2' 
-        }
-    }
     stages {
+        stage('Initialize') {
+            steps{
+                def dockerHome = tool 'myDocker'
+                def mavenHome  = tool 'myMaven'
+                env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
+
         stage('Image Build') {
             steps {
                 imageBuild(CONTAINER_NAME, CONTAINER_TAG)
