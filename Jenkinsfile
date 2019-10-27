@@ -3,9 +3,6 @@ def CONTAINER_TAG = "latest"
 
 pipeline {
     agent any
-    parameters {
-
-    }
     stages {
         stage('Initialize') {
             steps {
