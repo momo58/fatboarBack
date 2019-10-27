@@ -12,12 +12,18 @@ pipeline {
         }
 
         stage('Build') {
+             when {
+                branch 'develop'
+             }
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
 
         stage('Image Build') {
+            when {
+                branch 'develop'
+            }
             steps {
                 imageBuild(CONTAINER_NAME, CONTAINER_TAG)
             }
