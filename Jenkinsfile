@@ -2,6 +2,7 @@ def CONTAINER_NAME = "jenkins-pipeline"
 def CONTAINER_TAG = "latest"
 
 pipeline {
+    agent any
     stages {
         stage('Initialize') {
             steps{
