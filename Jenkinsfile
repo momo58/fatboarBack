@@ -15,7 +15,9 @@ pipeline {
             }
         }
         stage('Image Build') {
-            imageBuild(CONTAINER_NAME, CONTAINER_TAG)
+            steps {
+                imageBuild(CONTAINER_NAME, CONTAINER_TAG)
+            }
         }
     }
 }
