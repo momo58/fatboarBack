@@ -10,4 +10,4 @@ RUN  mvn -B -DskipTests clean package
 
 EXPOSE 8090
 
-ENTRYPOINT ["java", "-jar", "/pipeline/target/jenkins-pipeline.jar"]
+ENTRYPOINT ["java", "-jar", "/pipeline/target/Fatboar-Back-0.0.1-SNAPSHOT.jar"]

@@ -31,6 +31,10 @@ pipeline {
                 imageBuild(CONTAINER_NAME, CONTAINER_TAG)
             }
         }
+
+        stage('Run App'){
+            runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
+        }
     }
 }
 
@@ -38,3 +42,9 @@ def imageBuild(containerName, tag) {
     sh "docker build -t $containerName:$tag -t $containerName --pull --no-cache ."
     echo "build ended successfully !"
 }
+
+def runApp(containerName, tag, dockerHubUser, httpPort){
+    sh "docker-compose up"
+    echo "Application started on port: ${httpPort} (http)"
+}
+

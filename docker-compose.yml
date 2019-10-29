@@ -1,0 +1,24 @@
+version: '3.7'
+
+services:
+  packaging-launch:
+    image: fatboar-image
+    ports:
+      - 8080:8080
+    depends_on:
+      - packaging-database
+    environment:
+      - spring_datasource_url=jdbc:mysql://packaging-database/springboot?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
+      - spring_datasource_username=springuser
+      - spring_datasource_password=springuser
+  packaging-database:
+    image: mysql:8.0.14
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=springboot
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=springuser
+    volumes:
+      - dbdata:/var/lib/mysql
+volumes:
+  dbdata:
