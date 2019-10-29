@@ -46,7 +46,7 @@ def imageBuild(containerName, tag) {
 }
 
 def runApp(containerName, tag){
-    sh "/usr/local/bin/docker-compose up"
-    echo "Application started on port: ${httpPort} (http)"
+    sh "./run.sh"
+    echo "Application started"
 }
 
