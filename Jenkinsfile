@@ -34,7 +34,7 @@ pipeline {
 
         stage('Run App'){
             steps {
-                runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
+                runApp(CONTAINER_NAME, CONTAINER_TAG)
             }
         }
     }
@@ -45,7 +45,7 @@ def imageBuild(containerName, tag) {
     echo "build ended successfully !"
 }
 
-def runApp(containerName, tag, dockerHubUser, httpPort){
+def runApp(containerName, tag){
     sh "docker-compose up"
     echo "Application started on port: ${httpPort} (http)"
 }
