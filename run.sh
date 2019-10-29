@@ -1,1 +1,1 @@
-docker-compose -up
+ls -la /usr/local/bin/
