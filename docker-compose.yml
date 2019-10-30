@@ -11,6 +11,12 @@ services:
       - spring_datasource_url=jdbc:mysql://packaging-database/springboot?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
       - spring_datasource_username=springuser
       - spring_datasource_password=springuser
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=dev"
+      - "traefik.frontend.rule=Host:dev.fatboar.tk"
+      - "traefik.port=7000"
+      - "traefik.docker.network=web"
   packaging-database:
     image: mysql:8.0.14
     environment:
