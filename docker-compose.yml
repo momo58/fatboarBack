@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   packaging-launch:
-    image: fatboar-image
+    image: fatboar-image:latest
     ports:
       - 8080:8080
     depends_on:
@@ -12,7 +12,7 @@ services:
       - spring_datasource_username=springuser
       - spring_datasource_password=springuser
   packaging-database:
-    image: mysql:5.7
+    image: mysql:8.0.14
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=springboot
