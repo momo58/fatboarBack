@@ -12,7 +12,7 @@ services:
       - spring_datasource_username=springuser
       - spring_datasource_password=springuser
   packaging-database:
-    image: mysql:8.0.14
+    image: mysql:latest
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=springboot
