@@ -4,7 +4,7 @@ services:
   packaging-launch:
     image: jenkins-pipeline:latest
     ports:
-      - 8080:8080
+      - 8081:8080
     depends_on:
       - packaging-database
     environment:
