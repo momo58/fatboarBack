@@ -72,6 +72,11 @@ public class BackofficeController {
     @Autowired
     TicketRepository ticketRepository;
 
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
+
     /**
      * Accessible only by Admin
      * It allows admins to manage the home page presentation
