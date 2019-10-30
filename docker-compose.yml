@@ -15,7 +15,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=dev"
       - "traefik.frontend.rule=Host:dev.fatboar.tk"
-      - "traefik.port=7000"
+      - "traefik.port=8081"
       - "traefik.docker.network=web"
   packaging-database:
     image: mysql:8.0.14
