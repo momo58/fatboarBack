@@ -1,7 +1,6 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
 import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.exception.ResourceNotFoundException;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

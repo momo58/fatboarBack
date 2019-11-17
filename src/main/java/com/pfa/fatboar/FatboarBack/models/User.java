@@ -37,11 +37,8 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<Ticket> tickets;
 
-    @ManyToMany
-    @JoinTable(name = "user_roles",
-                joinColumns = @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public User() {
     }
@@ -116,12 +113,12 @@ public class User {
         this.sub = sub;
     }
 
-     public Set<Role> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override

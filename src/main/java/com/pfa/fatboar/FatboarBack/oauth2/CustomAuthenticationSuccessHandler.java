@@ -42,9 +42,12 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
         Map<String, Object> attributes = oidcUser.getAttributes();
         String email = (String) attributes.get("email");
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException("User with email not found"));
+
         String token = jwtTokenUtil.generateToken(user);
+
         String redirectionUrl = UriComponentsBuilder.fromUriString(homeUrl)
                 .queryParam("auth_token", token)
                 .build().toUriString();

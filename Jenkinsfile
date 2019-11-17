@@ -14,7 +14,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Fatboar-back') {
              when {
                 branch 'develop'
              }
@@ -23,7 +23,7 @@ pipeline {
             }
         }
 
-        stage('Image Build') {
+        stage('Build Fatboar image') {
             when {
                 branch 'develop'
             }
@@ -32,7 +32,7 @@ pipeline {
             }
         }
 
-        stage('Run App'){
+        stage('Run Fatboar == Deploy on development'){
             steps {
                 runApp(CONTAINER_NAME, CONTAINER_TAG)
             }

@@ -1,10 +1,12 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
 import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.models.*;
+import com.pfa.fatboar.FatboarBack.models.Game;
+import com.pfa.fatboar.FatboarBack.models.Role;
+import com.pfa.fatboar.FatboarBack.models.Ticket;
+import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.payload.*;
 import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
-import com.pfa.fatboar.FatboarBack.repositories.RoleRepository;
 import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
@@ -31,7 +33,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -58,9 +61,6 @@ public class BackofficeController {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
     JwtTokenUtil jwtTokenUtil;
 
     @Autowired
@@ -75,6 +75,11 @@ public class BackofficeController {
     @GetMapping("/hello")
     public String hello() {
         return "hello";
+    }
+
+    @PostMapping("/hello2")
+    public String hello2(@RequestBody String name) {
+        return "hello" + name;
     }
 
     /**
@@ -106,10 +111,7 @@ public class BackofficeController {
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        Role userRole = roleRepository.findByName(RoleName.ROLE_EMPLOYEE)
-                .orElseThrow(() -> new AppException("User role not set."));
-
-        user.setRoles(Collections.singleton(userRole));
+        user.setRole(Role.ROLE_EMPLOYEE);
 
         User result = userRepository.save(user);
 

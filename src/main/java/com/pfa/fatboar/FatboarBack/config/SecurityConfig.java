@@ -61,26 +61,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     @Override
     protected void configure(HttpSecurity http) throws Exception {
                  http.authorizeRequests()
-                .antMatchers("/api/tickets/**","/api/auth/**","/api/**","/admin/**").permitAll()
+                .antMatchers("/api/tickets/**","/api/auth/**","/api/**").permitAll()
                 .antMatchers("/api/auth/signup").hasRole("ADMIN")
                 .anyRequest()
                          .authenticated()
                          .and()
                          .csrf().disable()
                          .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-                 .and()
+                         .and()
+
                 .oauth2Login()
                 .redirectionEndpoint()
                 .baseUri("/oauth2/callback/*")
+
                 .and()
                 .userInfoEndpoint()
                 .oidcUserService(oidcUserService)
+
                 .and()
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorize")
                 .authorizationRequestRepository(customAuthorizationRequestRepository())
-                .and()
-                .successHandler(customAuthenticationSuccessHandler);
+                         .and()
+                         .successHandler(customAuthenticationSuccessHandler);
 
         http
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
