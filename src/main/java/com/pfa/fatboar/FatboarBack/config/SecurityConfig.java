@@ -1,7 +1,7 @@
 package com.pfa.fatboar.FatboarBack.config;
 
-import com.pfa.fatboar.FatboarBack.models.RoleName;
 import com.pfa.fatboar.FatboarBack.oauth2.CustomAuthenticationSuccessHandler;
+import com.pfa.fatboar.FatboarBack.oauth2.CustomOAuth2UserService;
 import com.pfa.fatboar.FatboarBack.security.JwtAuthenticationEntryPoint;
 import com.pfa.fatboar.FatboarBack.security.JwtAuthenticationFilter;
 import com.pfa.fatboar.FatboarBack.services.ServiceImpl.CustomUserDetailsService;
@@ -10,13 +10,13 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
@@ -28,7 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements ApplicationContextAware {
 
     @Autowired
-    private OidcUserService oidcUserService;
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Autowired
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Override
+    //@Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
@@ -60,7 +61,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-                 http.authorizeRequests()
+        http
+//                .cors()
+//                    .and()
+//                .sessionManagement()
+//                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                    .and()
+                .authorizeRequests()
                 .antMatchers("/api/tickets/**","/api/auth/**","/api/**").permitAll()
                 .antMatchers("/api/auth/signup").hasRole("ADMIN")
                 .anyRequest()
@@ -71,19 +78,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
                          .and()
 
                 .oauth2Login()
-                .redirectionEndpoint()
-                .baseUri("/oauth2/callback/*")
+                    .redirectionEndpoint()
+                        .baseUri("/oauth2/callback/*")
+                        .and()
 
-                .and()
-                .userInfoEndpoint()
-                .oidcUserService(oidcUserService)
+                    .userInfoEndpoint()
+                        .userService(customOAuth2UserService)
+                        .and()
 
-                .and()
-                .authorizationEndpoint()
-                .baseUri("/oauth2/authorize")
-                .authorizationRequestRepository(customAuthorizationRequestRepository())
-                         .and()
-                         .successHandler(customAuthenticationSuccessHandler);
+                    .authorizationEndpoint()
+                        .baseUri("/oauth2/authorize")
+                        .authorizationRequestRepository(customAuthorizationRequestRepository())
+                        .and()
+
+                    .successHandler(customAuthenticationSuccessHandler);
 
         http
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

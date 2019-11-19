@@ -1,41 +1,26 @@
 package com.pfa.fatboar.FatboarBack.dto;
 
-public class GoogleOAuth2UserInfo {
+import java.util.Map;
 
-    private String id;
-    private String name;
-    private String email;
-    private String imageUrl;
+public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
 
-    public String getId() {
-        return id;
+    public GoogleOAuth2UserInfo(Map<String, Object> attributes) {
+        super(attributes);
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getId() {
+        return (String) attributes.get("id");
     }
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return (String) attributes.get("name");
     }
 
     public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        return (String) attributes.get("email");
     }
 
     public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+        return (String) attributes.get("imageUrl");
     }
 }

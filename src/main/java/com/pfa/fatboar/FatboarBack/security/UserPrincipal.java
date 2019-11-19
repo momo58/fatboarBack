@@ -5,13 +5,17 @@ import com.pfa.fatboar.FatboarBack.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements OAuth2User, UserDetails {
     private Long id;
 
     private String username;
@@ -21,6 +25,9 @@ public class UserPrincipal implements UserDetails {
     private String email;
 
     private Collection<? extends GrantedAuthority> authorities;
+
+    private Map<String, Object> attributes;
+
 
     public UserPrincipal(Long id, String username, String password, String email, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
@@ -85,5 +92,18 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public String getName() {
+        return String.valueOf(id);
     }
 }

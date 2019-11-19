@@ -11,6 +11,8 @@ public class Game {
     private  Long id;
     private String name;
     private String header;
+    //Pour dire un gros objet
+    @Lob
     private String body;
 
     public Game() {

@@ -37,7 +37,7 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<Ticket> tickets;
 
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     private Role role;
 
     public User() {
