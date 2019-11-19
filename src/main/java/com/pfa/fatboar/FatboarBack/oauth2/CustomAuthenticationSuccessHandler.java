@@ -1,9 +1,6 @@
 package com.pfa.fatboar.FatboarBack.oauth2;
 
-import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
-import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -12,13 +9,11 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
-import sun.security.util.SecurityConstants;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 import static com.pfa.fatboar.FatboarBack.common.Constants.homeUrl;
 
@@ -47,9 +42,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         Object objectPrincipal = authentication.getPrincipal();
-        //DefaultOidcUser userPrincipal = (DefaultOidcUser) authentication.getPrincipal();
-        //DefaultOAuth2User
-
         String email = null;
 
         if (objectPrincipal instanceof DefaultOidcUser) { // gooogle
@@ -57,21 +49,13 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         } else if (objectPrincipal instanceof DefaultOAuth2User) { // facebook
             email = (String) ((DefaultOAuth2User) objectPrincipal).getAttributes().get("email");
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Unknown userPrincipal type.");
         }
 
-
-        //Map<String, Object> attributes = userPrincipal.getAttributes();
-        //String email = (String) attributes.get("email");
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException("User with email not found"));
-
-        String token = jwtTokenUtil.generateToken(user);
+        String token = jwtTokenUtil.generateToken(email);
 
         // TODO
         // response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
-
 
         String redirectionUrl = UriComponentsBuilder.fromUriString(homeUrl)
 
