@@ -40,28 +40,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 oAuth2UserRequest.getClientRegistration().getRegistrationId(), attributes);
 
 
-        updateUser(userInfo);
+        OAuth2UserInfoFactory.updateUser(userInfo, userRepository);
 
         return oAuth2User;
     }
 
-    private void updateUser(OAuth2UserInfo userInfo) {
-        Optional<User> userOpt = userRepository.findByEmail(userInfo.getEmail());
-        User user = null;
 
-        if (userOpt.isPresent()) {
-            user = userOpt.get();
-        }
-
-        if(user == null) {
-            user = new User();
-        }
-
-        user.setEmail(userInfo.getEmail());
-        user.setImageUrl(userInfo.getImageUrl());
-        user.setUsername(userInfo.getName());
-        user.setSub(userInfo.getId());
-        user.setRole(Role.ROLE_CLIENT);
-        userRepository.save(user);
-    }
 }

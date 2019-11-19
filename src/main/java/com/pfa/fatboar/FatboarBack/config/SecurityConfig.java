@@ -2,6 +2,7 @@ package com.pfa.fatboar.FatboarBack.config;
 
 import com.pfa.fatboar.FatboarBack.oauth2.CustomAuthenticationSuccessHandler;
 import com.pfa.fatboar.FatboarBack.oauth2.CustomOAuth2UserService;
+import com.pfa.fatboar.FatboarBack.oauth2.CustomOidcUserService;
 import com.pfa.fatboar.FatboarBack.security.JwtAuthenticationEntryPoint;
 import com.pfa.fatboar.FatboarBack.security.JwtAuthenticationFilter;
 import com.pfa.fatboar.FatboarBack.services.ServiceImpl.CustomUserDetailsService;
@@ -29,6 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
 
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
+
+    @Autowired
+    private CustomOidcUserService customOidcUserService;
 
     @Autowired
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
@@ -84,6 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
 
                     .userInfoEndpoint()
                         .userService(customOAuth2UserService)
+                        .oidcUserService(customOidcUserService)
                         .and()
 
                     .authorizationEndpoint()
