@@ -6,7 +6,7 @@ services:
     ports:
       - 8081:8080
     depends_on:
-      - packaging-database
+      - fatboar-back-database
     environment:
       - spring_datasource_url=jdbc:mysql://fatboar-back-database/springboot?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
       - spring_datasource_username=springuser
