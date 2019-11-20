@@ -1,13 +1,13 @@
 FROM maven:3-alpine
 
-COPY pom.xml pipeline/
+COPY pom.xml fatboar-back/
 
-COPY src/ pipeline/src/
+COPY src/ fatboar-back/src/
 
-WORKDIR pipeline/
+WORKDIR fatboar-back/
 
 RUN  mvn -B -DskipTests clean package
 
 EXPOSE 8090
 
-ENTRYPOINT ["java", "-jar", "/pipeline/target/Fatboar-Back-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/fatboar-back/target/Fatboar-Back-0.0.1-SNAPSHOT.jar"]

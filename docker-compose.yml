@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  packaging-launch:
-    image: jenkins-pipeline:latest
+  fatboar-back-exec:
+    image: Fatboar-back:latest
     ports:
       - 8081:8080
     depends_on:
@@ -17,7 +17,7 @@ services:
       - "traefik.frontend.rule=Host:dev.fatboar.tk"
       - "traefik.port=8081"
       - "traefik.docker.network=web"
-  packaging-database:
+  fatboar-back-database:
     image: mysql:8.0.14
     environment:
       - MYSQL_ROOT_PASSWORD=root
