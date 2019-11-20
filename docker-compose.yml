@@ -3,8 +3,6 @@ version: '3.7'
 services:
   fatboar-back-exec:
     image: fatboar-back:latest
-    ports:
-      - 8081:8080
     depends_on:
       - fatboar-back-database
     environment:
@@ -15,7 +13,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=dev"
       - "traefik.frontend.rule=Host:dev.fatboar.tk"
-      - "traefik.port=8081"
+      - "traefik.port=8080"
       - "traefik.docker.network=web"
   fatboar-back-database:
     image: mysql:8.0.14
