@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   fatboar-back-exec:
-    image: Fatboar-back:latest
+    image: fatboar-back:latest
     ports:
       - 8081:8080
     depends_on:
