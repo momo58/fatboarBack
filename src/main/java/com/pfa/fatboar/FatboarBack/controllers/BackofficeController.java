@@ -82,6 +82,11 @@ public class BackofficeController {
         return "hello" + name;
     }
 
+    @GetMapping("/apilog")
+    public void testAPi() {
+        logger.info("this is an info msg");
+    }
+
     /**
      * Accessible only by Admin
      * It allows admins to manage the home page presentation
