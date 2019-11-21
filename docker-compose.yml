@@ -2,20 +2,18 @@ version: '3.7'
 
 services:
   fatboar-back-exec:
-    image: Fatboar-back:latest
-    ports:
-      - 8081:8080
+    image: fatboar-back:latest
     depends_on:
-      - packaging-database
+      - fatboar-back-database
     environment:
-      - spring_datasource_url=jdbc:mysql://packaging-database/springboot?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
+      - spring_datasource_url=jdbc:mysql://fatboar-back-database/springboot?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
       - spring_datasource_username=springuser
       - spring_datasource_password=springuser
     labels:
       - "traefik.enable=true"
       - "traefik.backend=dev"
       - "traefik.frontend.rule=Host:dev.fatboar.tk"
-      - "traefik.port=8081"
+      - "traefik.port=8080"
       - "traefik.docker.network=web"
   fatboar-back-database:
     image: mysql:8.0.14

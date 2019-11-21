@@ -1,4 +1,4 @@
-def CONTAINER_NAME = "Fatboar-back"
+def CONTAINER_NAME = "fatboar-back"
 def CONTAINER_TAG = "latest"
 
 pipeline {
