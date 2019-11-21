@@ -32,6 +32,12 @@ pipeline {
             }
         }
 
+        stage('') {
+            steps {
+            
+            }
+        }
+
         stage('Run Fatboar == Deploy on development'){
             steps {
                 runApp(CONTAINER_NAME, CONTAINER_TAG)
