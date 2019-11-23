@@ -32,3 +32,7 @@
 2019-11-21 22:27:39.560  INFO 5612 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 10 ms
 2019-11-21 22:27:39.578  WARN 5612 --- [http-nio-8080-exec-1] c.p.f.F.s.JwtAuthenticationFilter        : couldn't find bearer string, will ignore the header
 2019-11-21 22:27:39.607  INFO 5612 --- [http-nio-8080-exec-1] c.p.f.F.controllers.TicketController     : this is an info msg
+2019-11-21 22:56:21.406  INFO 5612 --- [Thread-9] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2019-11-21 22:56:21.411  INFO 5612 --- [Thread-9] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2019-11-21 22:56:21.428  INFO 5612 --- [Thread-9] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2019-11-21 22:56:21.437  INFO 5612 --- [Thread-9] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

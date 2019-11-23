@@ -32,6 +32,14 @@ pipeline {
             }
         }
 
+        stage('Sonar'){
+            try {
+                sh "mvn sonar:sonar"
+            } catch(error){
+                echo "The sonar server could not be reached ${error}"
+            }
+        }
+
         stage('Run Fatboar == Deploy on development'){
             steps {
                 runApp(CONTAINER_NAME, CONTAINER_TAG)
@@ -42,7 +50,14 @@ pipeline {
 
 def imageBuild(containerName, tag) {
     sh "docker build -t $containerName:$tag -t $containerName --pull --no-cache ."
-    echo "build ended successfully !"
+    echo "The image build ended successfully !"
+}
+
+def pushImageToPrivateRegistry(containerName, tag) {
+    sh "docker login registry.fatboar.tk -u admin -p admin"
+    sh "docker tag $containerName:$tag admin/$containerName:$tag"
+    sh "docker push admin/$containerName:$tag"
+    echo "Image push complete"
 }
 
 def runApp(containerName, tag){
