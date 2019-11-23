@@ -34,11 +34,7 @@ pipeline {
 
         stage('Sonar'){
             steps {
-                try {
-                    sh "mvn sonar:sonar"
-                } catch(error){
-                    echo "The sonar server could not be reached ${error}"
-                }
+                sh "mvn sonar:sonar"
             }
         }
 
