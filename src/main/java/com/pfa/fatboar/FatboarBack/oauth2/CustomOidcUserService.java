@@ -1,11 +1,6 @@
 package com.pfa.fatboar.FatboarBack.oauth2;
 
-import com.pfa.fatboar.FatboarBack.dto.GoogleOAuth2UserInfo;
 import com.pfa.fatboar.FatboarBack.dto.OAuth2UserInfo;
-import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.models.Role;
-import com.pfa.fatboar.FatboarBack.models.RoleName;
-import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
