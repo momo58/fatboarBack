@@ -19,7 +19,7 @@ pipeline {
                 branch 'develop'
              }
             steps {
-                sh 'mvn clean verify -DskipITs=true'
+                sh 'mvn clean verify -DskipITs=true -DargLine="-Dspring.profiles.active=test"'
                 junit '**/target/surefire-reports/TEST-*.xml'
             }
         }
