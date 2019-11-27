@@ -26,7 +26,9 @@ pipeline {
 
          stage('Run SonarQube analysis'){
             steps {
-                sh "mvn sonar:sonar -Dsonar.host.url=https://sonarqube.fatboar.tk -Dsonar.login=6c64fc4c493b12f3c9ee9fb3667068495dc6e360"
+                sh "mvn sonar:sonar \
+                  -Dsonar.host.url=https://sonarqube.fatboar.tk \
+                  -Dsonar.login=67cf6bdebdffb7b45f6ee812412e31ead3a3edf0"
             }
         }
 
