@@ -1,7 +1,5 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
-import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.models.Gain;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
@@ -9,19 +7,13 @@ import com.pfa.fatboar.FatboarBack.security.CurrentUser;
 import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 import com.pfa.fatboar.FatboarBack.services.TicketService;
 import com.pfa.fatboar.FatboarBack.services.UserService;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +66,7 @@ public class TicketController {
             List<Ticket> tickets = userLoggedIn.getTickets();
 
             if (tickets.isEmpty()) {
-                logger.info("There is no tickets");
+                logger.info("The actual client has no tickets yet, so no gain yet.");
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
             for (Ticket t : tickets) {
@@ -82,7 +74,7 @@ public class TicketController {
                     gains.add(t.getGain().getLabel());
                 }
             }
-            return new ResponseEntity<List<String>>(gains, HttpStatus.OK);
+            return new ResponseEntity<>(gains, HttpStatus.OK);
         }
         logger.info("There is no user");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

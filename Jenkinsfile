@@ -14,12 +14,19 @@ pipeline {
             }
         }
 
-        stage('Build Fatboar-back') {
+        stage('Build Fatboar-back & Unit tests') {
              when {
                 branch 'develop'
              }
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn clean verify -DskipITs=true'
+                junit '**/target/surefire-reports/TEST-*.xml'
+            }
+        }
+
+         stage('Run SonarQube analysis'){
+            steps {
+                sh "mvn sonar:sonar -Dsonar.host.url=https://sonarqube.fatboar.tk -Dsonar.login=6c64fc4c493b12f3c9ee9fb3667068495dc6e360"
             }
         }
 
@@ -29,12 +36,6 @@ pipeline {
             }
             steps {
                 imageBuild(CONTAINER_NAME, CONTAINER_TAG)
-            }
-        }
-
-        stage('SonarQube analysis'){
-            steps {
-                sh "mvn sonar:sonar -Dsonar.host.url=https://sonarqube.fatboar.tk -Dsonar.login=6c64fc4c493b12f3c9ee9fb3667068495dc6e360"
             }
         }
 
