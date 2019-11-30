@@ -4523,3 +4523,7 @@ Caused by: java.sql.SQLSyntaxErrorException: Unknown table 'sequences' in inform
 2019-11-27 21:24:11.559  INFO 9865 --- [Thread-6] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
 2019-11-27 21:24:11.580  INFO 9865 --- [Thread-6] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
 2019-11-27 21:24:11.580  INFO 9865 --- [Thread-3] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2019-11-28 13:37:53.281  INFO 5338 --- [Thread-9] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2019-11-28 13:37:53.287  INFO 5338 --- [Thread-9] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2019-11-28 13:37:53.294  INFO 5338 --- [Thread-9] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2019-11-28 13:37:53.311  INFO 5338 --- [Thread-9] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
