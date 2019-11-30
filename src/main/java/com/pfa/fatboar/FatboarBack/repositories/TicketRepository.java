@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Ticket findTicketByTicketNumber(int ticketNumber);
-
     int countByState(int state);
     long count();
 }

@@ -1,8 +1,6 @@
 package com.pfa.fatboar.FatboarBack.models;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "tickets")

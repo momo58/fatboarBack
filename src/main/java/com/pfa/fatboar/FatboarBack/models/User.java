@@ -1,5 +1,6 @@
 package com.pfa.fatboar.FatboarBack.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -41,14 +42,13 @@ public class User {
 	//@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private List<Ticket> tickets;
+    private List<Ticket> tickets = new ArrayList<>();
 
     //@Enumerated(EnumType.STRING)
     private Role role;
 
     public User() {
     }
-
 
     public User(@NotBlank @Size(max = 40) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String password) {
         this.username = username;
