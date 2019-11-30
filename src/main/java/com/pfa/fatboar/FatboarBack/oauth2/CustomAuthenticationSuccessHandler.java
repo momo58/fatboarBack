@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.pfa.fatboar.FatboarBack.common.Constants.homeUrl;
+import static com.pfa.fatboar.FatboarBack.common.Constants.FRONT_URL;
 
 
 @Component
@@ -57,7 +57,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         // TODO
         // response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
 
-        String redirectionUrl = UriComponentsBuilder.fromUriString(homeUrl)
+        String redirectionUrl = UriComponentsBuilder.fromUriString(FRONT_URL)
 
                 .queryParam("auth_token", token)
                 .build().toUriString();
