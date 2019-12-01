@@ -64,9 +64,9 @@ def imageBuild(containerName, tag) {
 }
 
 def pushImageToNexusRegistry(containerName, tag) {
-    sh "docker login Nexus:8123 -u admin -p admin"
-    sh "docker tag $containerName:$tag Nexus:8123/$containerName:$tag"
-    sh "docker push Nexus:8123/$containerName:$tag"
+    sh "docker login nexus.fatboar.tk:8123 -u admin -p admin"
+    sh "docker tag $containerName:$tag nexus.fatboar.tk:8123/$containerName:$tag"
+    sh "docker push nexus.fatboar.tk:8123/$containerName:$tag"
     echo "Image push complete"
 }
 
