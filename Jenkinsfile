@@ -41,6 +41,15 @@ pipeline {
             }
         }
 
+        stage('Pushing image to nexus repo') {
+            when {
+                branch 'develop'
+            }
+            steps {
+                pushImageToNexusRegistry(CONTAINER_NAME, CONTAINER_TAG)
+            }
+        }
+
         stage('Run Fatboar == Deploy on development'){
             steps {
                 runApp(CONTAINER_NAME, CONTAINER_TAG)
@@ -54,10 +63,10 @@ def imageBuild(containerName, tag) {
     echo "The image build ended successfully !"
 }
 
-def pushImageToPrivateRegistry(containerName, tag) {
-    sh "docker login registry.fatboar.tk -u admin -p admin"
-    sh "docker tag $containerName:$tag admin/$containerName:$tag"
-    sh "docker push admin/$containerName:$tag"
+def pushImageToNexusRegistry(containerName, tag) {
+    sh "docker login Nexus:8123 -u admin -p admin"
+    sh "docker tag $containerName:$tag Nexus:8123/$containerName:$tag"
+    sh "docker push Nexus:8123/$containerName:$tag"
     echo "Image push complete"
 }
 
