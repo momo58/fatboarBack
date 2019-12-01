@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,6 +54,14 @@ public class UserController {
     @GetMapping("/user/me")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
        return userService.loggedInUser(userPrincipal);
+    }
+    
+    @PostMapping("/user/toggleSubscribe")
+    public ResponseEntity<Boolean> toggleSubscribe(@CurrentUser UserPrincipal userPrincipal, 
+    		@RequestBody Boolean subscribe) {
+    	return ResponseEntity
+    			.status(HttpStatus.OK)
+    			.body(userService.toggleSubscribe(userPrincipal, subscribe));
     }
 
     /**

@@ -81,4 +81,11 @@ public class UserService {
 
         usersIds.forEach(u -> System.out.println(u));*/
     }
+
+	public Boolean toggleSubscribe(UserPrincipal userPrincipal, Boolean subscribe) {
+		User user = loggedInUser(userPrincipal);
+		user.setSubscribeToNewsLetters(subscribe);
+		userRepository.save(user);
+		return user.isSubscribeToNewsLetters();
+	}
 }
