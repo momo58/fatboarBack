@@ -1,11 +1,20 @@
 package com.pfa.fatboar.FatboarBack.models;
 
-import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -27,8 +36,10 @@ public class User {
     private String email;
 
     private String imageUrl;
+    
+    private boolean subscribeToNewsLetters;
 
-    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	//@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private List<Ticket> tickets = new ArrayList<>();
@@ -115,6 +126,14 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public boolean isSubscribeToNewsLetters() {
+		return subscribeToNewsLetters;
+	}
+
+	public void setSubscribeToNewsLetters(boolean subscribeToNewsLetters) {
+		this.subscribeToNewsLetters = subscribeToNewsLetters;
+	}
 
     @Override
     public String toString() {
