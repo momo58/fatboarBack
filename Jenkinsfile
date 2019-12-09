@@ -14,17 +14,20 @@ pipeline {
             }
         }
 
+        stage('Test docker compose') {
+            steps {
+               sh "docker-compose -v"
+            }
+        }
+
         stage('Build Fatboar-back & Unit tests') {
-             when {
-                branch 'develop'
-             }
             steps {
                 sh 'mvn clean verify -DskipITs=true -DargLine="-Dspring.profiles.active=test"'
                 junit '**/target/surefire-reports/TEST-*.xml'
             }
         }
 
-         stage('Run SonarQube analysis'){
+        stage('Run SonarQube analysis'){
             steps {
                 sh "mvn sonar:sonar \
                       -Dsonar.host.url=https://sonarqube.fatboar.tk \
@@ -32,21 +35,49 @@ pipeline {
             }
         }
 
-        stage('Build Fatboar image') {
-            when {
-                branch 'develop'
+        stage("Image Prune"){
+            steps {
+                imagePrune(CONTAINER_NAME)
             }
+        }
+
+        stage('Build Fatboar image') {
             steps {
                 imageBuild(CONTAINER_NAME, CONTAINER_TAG)
             }
         }
 
-        stage('Run Fatboar == Deploy on development'){
+        stage('Pushing image to nexus repo') {
             steps {
-                runApp(CONTAINER_NAME, CONTAINER_TAG)
+                pushImageToNexusRegistry(CONTAINER_NAME, CONTAINER_TAG)
+            }
+        }
+
+        stage('Deploy Fatboar on development') {
+           when {
+               branch 'develop'
+           }
+           steps {
+               pullImageFromNexus(CONTAINER_NAME, CONTAINER_TAG)
+               sh "docker-compose -f docker-compose.yml -f docker-compose.qa.yml up"
+           }
+        }
+
+        stage('Deploy Fatboar on Qualification') {
+           when {
+               branch 'Release'
+           }
+            steps {
+                 sh "docker-compose up"
+                 echo "Application started"
             }
         }
     }
+}
+
+def imagePrune(containerName) {
+    sh "docker image prune -f"
+    sh "docker ps"
 }
 
 def imageBuild(containerName, tag) {
@@ -54,15 +85,14 @@ def imageBuild(containerName, tag) {
     echo "The image build ended successfully !"
 }
 
-def pushImageToPrivateRegistry(containerName, tag) {
-    sh "docker login registry.fatboar.tk -u admin -p admin"
-    sh "docker tag $containerName:$tag admin/$containerName:$tag"
-    sh "docker push admin/$containerName:$tag"
+def pushImageToNexusRegistry(containerName, tag) {
+    sh "docker login nexus.fatboar.tk:8123 -u admin -p admin"
+    sh "docker tag $containerName:$tag nexus.fatboar.tk:8123/$containerName:$tag"
+    sh "docker push nexus.fatboar.tk:8123/$containerName:$tag"
     echo "Image push complete"
 }
 
-def runApp(containerName, tag){
-    sh "./run.sh"
-    echo "Application started"
+def pullImageFromNexus(containerName, tag) {
+    sh "docker pull nexus.fatboar.tk:8123/$containerName:$tag"
 }
 
