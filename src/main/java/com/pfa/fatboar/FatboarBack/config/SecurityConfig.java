@@ -11,12 +11,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
@@ -26,6 +24,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+/**
+ * Contains all the security configs required
+ */
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements ApplicationContextAware {
 
     @Autowired
@@ -44,7 +45,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Override
-    //@Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
@@ -66,9 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-//                .sessionManagement()
-//                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                    .and()
                 .authorizeRequests()
                 .antMatchers("/api/tickets/**","/api/auth/**","/api/**","/admin/**").permitAll()
                 .antMatchers("/admin/signup").hasRole("ADMIN")
@@ -101,6 +98,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
 
     }
 
+    /**
+     * All the state related to the authorization request is saved using the AuthorizationRequestRepository
+     * @return
+     */
     @Bean
     public AuthorizationRequestRepository<OAuth2AuthorizationRequest> customAuthorizationRequestRepository() {
         return new HttpSessionOAuth2AuthorizationRequestRepository();
