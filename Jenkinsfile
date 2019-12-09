@@ -52,7 +52,7 @@ pipeline {
                 branch 'develop'
             }
             steps {
-                docker-compose up
+                sh "docker-compose up"
                 echo "Application started"
             }
         }
@@ -63,7 +63,7 @@ pipeline {
             }
             steps {
                 pullImageFromNexus(CONTAINER_NAME, CONTAINER_TAG)
-                docker-compose -f docker-compose.yml -f docker-compose.qa.yml up
+                sh "docker-compose -f docker-compose.yml -f docker-compose.qa.yml up"
             }
         }
     }
