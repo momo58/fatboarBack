@@ -71,7 +71,7 @@ pipeline {
 
 def imagePrune(containerName) {
     sh "docker image prune -f"
-    sh "docker stop $containerName"
+    sh "docker ps"
 }
 
 def imageBuild(containerName, tag) {
