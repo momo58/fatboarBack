@@ -57,7 +57,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Fatboar on Qualification'') {
+        stage('Deploy Fatboar on Qualification') {
             when {
                 branch 'release'
             }
