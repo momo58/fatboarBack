@@ -14,12 +14,6 @@ pipeline {
             }
         }
 
-        stage('Test docker compose') {
-            steps {
-               sh "docker-compose -v"
-            }
-        }
-
         stage('Build Fatboar-back & Unit tests') {
             steps {
                 sh 'mvn clean verify -DskipITs=true -DargLine="-Dspring.profiles.active=test"'
