@@ -1,5 +1,14 @@
 package com.pfa.fatboar.FatboarBack.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.pfa.fatboar.FatboarBack.controllers.TicketController;
 import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.exception.ResourceNotFoundException;
@@ -7,19 +16,6 @@ import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
 import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 @Service
 public class UserService {
@@ -81,11 +77,4 @@ public class UserService {
 
         usersIds.forEach(u -> System.out.println(u));*/
     }
-
-	public Boolean toggleSubscribe(UserPrincipal userPrincipal, Boolean subscribe) {
-		User user = loggedInUser(userPrincipal);
-		user.setSubscribeToNewsLetters(subscribe);
-		userRepository.save(user);
-		return user.isSubscribeToNewsLetters();
-	}
 }
