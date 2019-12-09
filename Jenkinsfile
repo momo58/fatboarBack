@@ -59,7 +59,7 @@ pipeline {
 
         stage('Deploy Fatboar on Qualification') {
             when {
-                branch 'release'
+                branch 'Release'
             }
             steps {
                 pullImageFromNexus(CONTAINER_NAME, CONTAINER_TAG)
