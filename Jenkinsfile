@@ -48,22 +48,22 @@ pipeline {
         }
 
         stage('Deploy Fatboar on development') {
-           when {
+            when {
                branch 'develop'
-           }
-           steps {
-               pullImageFromNexus(CONTAINER_NAME, CONTAINER_TAG)
-               sh "docker-compose -f docker-compose.yml -f docker-compose.qa.yml up"
-           }
-        }
-
-        stage('Deploy Fatboar on Qualification') {
-           when {
-               branch 'Release'
-           }
+            }
             steps {
                  sh "docker-compose up"
                  echo "Application started"
+            }
+        }
+
+        stage('Deploy Fatboar on Qualification') {
+            when {
+               branch 'release'
+            }
+            steps {
+               pullImageFromNexus(CONTAINER_NAME, CONTAINER_TAG)
+               sh "docker-compose -f docker-compose.yml -f docker-compose.qa.yml up"
             }
         }
     }
@@ -71,7 +71,6 @@ pipeline {
 
 def imagePrune(containerName) {
     sh "docker image prune -f"
-    sh "docker ps"
 }
 
 def imageBuild(containerName, tag) {
