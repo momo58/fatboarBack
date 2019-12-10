@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "roles")
 public enum Role {
-    ROLE_ADMIN(1, "ADMIN"), ROLE_EMPLOYEE(2, "EMPLOYEE"), ROLE_CLIENT(3, "CLIENT");
+    ROLE_SUPER_ADMIN(0, "SUPER_ADMIN"), ROLE_ADMIN(1, "ADMIN"), ROLE_MANAGER(2, "EMPLOYEE"), ROLE_EMPLOYE(3, "CLIENT"), ROLE_CLIENT(4, "MANAGER");
 
     @Id
     private int id;

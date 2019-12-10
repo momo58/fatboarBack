@@ -1,22 +1,14 @@
 package com.pfa.fatboar.FatboarBack.payload;
 
 public class GamePresentationRequest {
-    private String header;
-    private String body;
+    private String content;
 
-    public String getHeader() {
-        return header;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public void setHeader(String header) {
-        this.header = header;
-    }
+	public void setContent(String content) {
+		this.content = content;
+	}
 
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
 }

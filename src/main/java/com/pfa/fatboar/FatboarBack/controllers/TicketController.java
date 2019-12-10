@@ -1,21 +1,27 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
-import com.pfa.fatboar.FatboarBack.models.Ticket;
-import com.pfa.fatboar.FatboarBack.models.User;
-import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
-import com.pfa.fatboar.FatboarBack.security.CurrentUser;
-import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
-import com.pfa.fatboar.FatboarBack.services.TicketService;
-import com.pfa.fatboar.FatboarBack.services.UserService;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.pfa.fatboar.FatboarBack.models.Client;
+import com.pfa.fatboar.FatboarBack.models.Ticket;
+import com.pfa.fatboar.FatboarBack.payload.HistoryGainResponse;
+import com.pfa.fatboar.FatboarBack.payload.InsertTicketsRequest;
+import com.pfa.fatboar.FatboarBack.security.CurrentUser;
+import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
+import com.pfa.fatboar.FatboarBack.services.ClientService;
+import com.pfa.fatboar.FatboarBack.services.TicketService;
+import com.pfa.fatboar.FatboarBack.services.UserService;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -25,12 +31,12 @@ public class TicketController {
 
     @Autowired
     TicketService ticketService;
+    
+    @Autowired
+    private ClientService clientService;
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    UserRepository userRepository;
 
     /**
      * Processes the ticket number submission by the client on the site
@@ -45,7 +51,7 @@ public class TicketController {
             gain = ticketService.handleTicketSubmission(ticket.getTicketNumber(),userPrincipal);
         }
         catch(Exception e) {
-            e.getMessage();
+        	return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<String>(gain, HttpStatus.OK);
     }
@@ -58,26 +64,15 @@ public class TicketController {
      * @return
      */
     @GetMapping("/gainhistory")
-    public ResponseEntity<List<String>> getUserGains(@CurrentUser UserPrincipal userPrincipal) {
-        List<String > gains = new ArrayList<>();
-        User userLoggedIn = userService.loggedInUser(userPrincipal);
-
-        if (userLoggedIn != null) {
-            List<Ticket> tickets = userLoggedIn.getTickets();
-
-            if (tickets.isEmpty()) {
-                logger.info("The actual client has no tickets yet, so no gain yet.");
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-            }
-            for (Ticket t : tickets) {
-                if (t.getState() == 2) {
-                    gains.add(t.getGain().getLabel());
-                }
-            }
-            return new ResponseEntity<>(gains, HttpStatus.OK);
-        }
-        logger.info("There is no user");
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    public ResponseEntity<List<HistoryGainResponse>> getUserGains(@CurrentUser UserPrincipal userPrincipal) {
+        Client userLoggedIn = clientService.loggedInClient(userPrincipal);
+        return ResponseEntity.ok(clientService.findAllGains(userLoggedIn));
+    }
+    
+    @PostMapping("/insertTickets")
+    public ResponseEntity<String> batchInsertTickets(@RequestBody InsertTicketsRequest request) {
+    	ticketService.batchInsertTickets(request);
+    	return ResponseEntity.status(200).body("La tâche d'insertion des tickets a débutée");
     }
 }
 
