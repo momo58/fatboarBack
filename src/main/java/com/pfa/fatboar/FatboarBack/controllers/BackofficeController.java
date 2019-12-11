@@ -35,16 +35,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.pfa.fatboar.FatboarBack.exception.AppException;
+import com.pfa.fatboar.FatboarBack.models.Admin;
 import com.pfa.fatboar.FatboarBack.models.Employe;
 import com.pfa.fatboar.FatboarBack.models.Game;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
 import com.pfa.fatboar.FatboarBack.models.User;
+import com.pfa.fatboar.FatboarBack.payload.AdminSignupRequest;
 import com.pfa.fatboar.FatboarBack.payload.ApiResponse;
 import com.pfa.fatboar.FatboarBack.payload.AuthResponse;
 import com.pfa.fatboar.FatboarBack.payload.EmailingRequest;
 import com.pfa.fatboar.FatboarBack.payload.EmployeSignUpRequest;
 import com.pfa.fatboar.FatboarBack.payload.GamePresentationRequest;
 import com.pfa.fatboar.FatboarBack.payload.LoginRequest;
+import com.pfa.fatboar.FatboarBack.payload.SignupRequest;
 import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
 import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
@@ -122,25 +125,6 @@ public class BackofficeController {
     	
     	return new ResponseEntity(new ApiResponse(true, "Game presentation successfully saved"), HttpStatus.OK);
     	
-    }
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerEmploye(@Valid @RequestBody EmployeSignUpRequest signupRequest) {
-        logger.info("enter");
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
-        }
-
-        User user = new Employe(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        User result = userRepository.save(user);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("api/user/me")
-                .buildAndExpand(result.getUsername()).toUri();
-
-        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
     }
 
     @PostMapping("/signin")
@@ -242,6 +226,49 @@ public class BackofficeController {
                 .contentLength(file.length())
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .body(resource);
+    }
+    
+    @PostMapping("signup/admin")
+    public ResponseEntity<?> signupAdmin(AdminSignupRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
+        }
+
+        Admin user = new Admin(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getPerimetre());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User result = userRepository.save(user);
+
+        return ResponseEntity.ok(result);
+    }
+    
+    @PostMapping("signup/manager")
+    public ResponseEntity<?> signupManager(SignupRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
+        }
+
+        User user = new Employe(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User result = userRepository.save(user);
+
+        return ResponseEntity.ok(result);
+    }
+
+
+    @PostMapping("/signup/employe")
+    public ResponseEntity<?> registerEmploye(@Valid @RequestBody EmployeSignUpRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
+        }
+
+        User user = new Employe(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User result = userRepository.save(user);
+
+        return ResponseEntity.ok(result);
     }
     
 }
