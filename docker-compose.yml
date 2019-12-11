@@ -15,6 +15,7 @@ services:
       - "traefik.backend=dev"
       - "traefik.port=8080"
       - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:dev-backend.fatboar.tk"
     networks:
       - web
   fatboar-back-database:
