@@ -1,9 +1,7 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,12 +30,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.models.Admin;
 import com.pfa.fatboar.FatboarBack.models.Employe;
-import com.pfa.fatboar.FatboarBack.models.Game;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.payload.AdminSignupRequest;
@@ -93,21 +89,6 @@ public class BackofficeController {
 
     @Autowired
     TicketRepository ticketRepository;
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
-    }
-
-    @PostMapping("/hello2")
-    public String hello2(@RequestBody String name) {
-        return "hello" + name;
-    }
-
-    @GetMapping("/apilog")
-    public void testAPi() {
-        logger.info("this is an info msg");
-    }
 
     /**
      * Accessible only by Admin
