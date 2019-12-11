@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  fatboar-back-exec:
+  fatboar-back:
     image: fatboar-back:latest
     container_name: fatboar-back
     depends_on:
