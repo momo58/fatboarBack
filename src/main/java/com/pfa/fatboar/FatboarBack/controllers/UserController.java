@@ -1,11 +1,7 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
-import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.models.User;
-import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
-import com.pfa.fatboar.FatboarBack.security.CurrentUser;
-import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
-import com.pfa.fatboar.FatboarBack.services.UserService;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.pfa.fatboar.FatboarBack.exception.AppException;
+import com.pfa.fatboar.FatboarBack.models.Client;
+import com.pfa.fatboar.FatboarBack.models.User;
+import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
+import com.pfa.fatboar.FatboarBack.security.CurrentUser;
+import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
+import com.pfa.fatboar.FatboarBack.services.ClientService;
+import com.pfa.fatboar.FatboarBack.services.UserService;
 
 @RestController
 @RequestMapping("/api")
@@ -30,6 +33,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    ClientService clientService;
 
     @GetMapping("/home")
     public String loadHomePage() {
@@ -58,10 +64,10 @@ public class UserController {
     
     @PostMapping("/user/toggleSubscribe")
     public ResponseEntity<Boolean> toggleSubscribe(@CurrentUser UserPrincipal userPrincipal, 
-    		@RequestBody Boolean subscribe) {
+    		@RequestBody Client subscriber) {
     	return ResponseEntity
     			.status(HttpStatus.OK)
-    			.body(userService.toggleSubscribe(userPrincipal, subscribe));
+    			.body(clientService.toggleSubscribe(userPrincipal, subscriber.isSubscribeToNewsLetters()));
     }
 
     /**

@@ -54,9 +54,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String token = jwtTokenUtil.generateToken(email);
 
-        // TODO
-        // response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
-
         String redirectionUrl = UriComponentsBuilder.fromUriString(FRONT_URL)
 
                 .queryParam("auth_token", token)

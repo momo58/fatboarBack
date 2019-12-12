@@ -1,11 +1,11 @@
 version: '3.7'
 
 services:
-  fatboar-back-exec:
+  fatboar-back:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=concours"
-      - "traefik.frontend.rule=Host:concours.fatboar.tk"
+      - "traefik.frontend.rule=Host:concours-backend.fatboar.tk"
       - "traefik.port=8080"
       - "traefik.docker.network=web"
 

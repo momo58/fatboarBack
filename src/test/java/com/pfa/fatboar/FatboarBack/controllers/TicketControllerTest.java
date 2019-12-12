@@ -1,10 +1,12 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
-import com.pfa.fatboar.FatboarBack.models.Gain;
-import com.pfa.fatboar.FatboarBack.models.Ticket;
-import com.pfa.fatboar.FatboarBack.models.User;
-import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
-import com.pfa.fatboar.FatboarBack.services.UserService;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.pfa.fatboar.FatboarBack.models.Client;
+import com.pfa.fatboar.FatboarBack.models.Gain;
+import com.pfa.fatboar.FatboarBack.models.Ticket;
+import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
+import com.pfa.fatboar.FatboarBack.services.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -40,9 +41,9 @@ public class TicketControllerTest {
     @Test
     public void getUserGains() {
 
-        User loggedInUser = new User();
-        Gain gain = new Gain("1", "dessert au choix");
-        Ticket ticket = new Ticket(341567890, 34, 2, loggedInUser.getId(), gain);
+        Client loggedInUser = new Client();
+        Gain gain = new Gain("dessert au choix");
+        Ticket ticket = new Ticket("1111111112", 34, 2, loggedInUser.getId(), gain);
         loggedInUser.getTickets().add(ticket);
 
         given(userService.loggedInUser(userPrincipal)).willReturn(loggedInUser);

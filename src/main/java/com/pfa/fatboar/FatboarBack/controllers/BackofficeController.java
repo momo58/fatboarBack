@@ -1,24 +1,21 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
-import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.models.Game;
-import com.pfa.fatboar.FatboarBack.models.Role;
-import com.pfa.fatboar.FatboarBack.models.Ticket;
-import com.pfa.fatboar.FatboarBack.models.User;
-import com.pfa.fatboar.FatboarBack.payload.*;
-import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
-import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
-import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
-import com.pfa.fatboar.FatboarBack.security.CurrentUser;
-import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
-import com.pfa.fatboar.FatboarBack.services.TicketService;
-import com.pfa.fatboar.FatboarBack.services.UserService;
-import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
-import com.pfa.fatboar.FatboarBack.utilities.TokenProvider;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -28,13 +25,34 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
+import com.pfa.fatboar.FatboarBack.exception.AppException;
+import com.pfa.fatboar.FatboarBack.models.Admin;
+import com.pfa.fatboar.FatboarBack.models.Employe;
+import com.pfa.fatboar.FatboarBack.models.Ticket;
+import com.pfa.fatboar.FatboarBack.models.User;
+import com.pfa.fatboar.FatboarBack.payload.AdminSignupRequest;
+import com.pfa.fatboar.FatboarBack.payload.ApiResponse;
+import com.pfa.fatboar.FatboarBack.payload.AuthResponse;
+import com.pfa.fatboar.FatboarBack.payload.EmailingRequest;
+import com.pfa.fatboar.FatboarBack.payload.EmployeSignUpRequest;
+import com.pfa.fatboar.FatboarBack.payload.GamePresentationRequest;
+import com.pfa.fatboar.FatboarBack.payload.LoginRequest;
+import com.pfa.fatboar.FatboarBack.payload.SignupRequest;
+import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
+import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
+import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
+import com.pfa.fatboar.FatboarBack.security.CurrentUser;
+import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
+import com.pfa.fatboar.FatboarBack.services.ClientService;
+import com.pfa.fatboar.FatboarBack.services.TicketService;
+import com.pfa.fatboar.FatboarBack.services.UserService;
+import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
 
 @RestController
 @RequestMapping("/admin")
@@ -53,6 +71,9 @@ public class BackofficeController {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    private ClientService clientService;
 
     @Autowired
     UserRepository userRepository;
@@ -62,30 +83,12 @@ public class BackofficeController {
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    TokenProvider tokenProvider;
-
+    
     @Autowired
     GameRepository gameRepository;
 
     @Autowired
     TicketRepository ticketRepository;
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
-    }
-
-    @PostMapping("/hello2")
-    public String hello2(@RequestBody String name) {
-        return "hello" + name;
-    }
-
-    @GetMapping("/apilog")
-    public void testAPi() {
-        logger.info("this is an info msg");
-    }
 
     /**
      * Accessible only by Admin
@@ -93,38 +96,16 @@ public class BackofficeController {
      */
     @PostMapping("/introducethegame")
     public ResponseEntity<?> introduceTheGame(@RequestBody GamePresentationRequest gamePresentationRequest) {
-        Game game = new Game();
+    	if (gamePresentationRequest.getContent() == null)
+    		return new ResponseEntity(new ApiResponse(true, "Game presentation not successfully saved"), HttpStatus.BAD_REQUEST); 
 
-        if (gamePresentationRequest.getHeader() != null && gamePresentationRequest.getBody() != null) {
-            game.setName("jeu-concour");
-            game.setHeader(gamePresentationRequest.getHeader());
-            game.setBody(gamePresentationRequest.getBody());
-            gameRepository.save(game);
-            return new ResponseEntity(new ApiResponse(true, "Game presentation successfully saved"), HttpStatus.OK);
-        } else {
-            return new ResponseEntity(new ApiResponse(true, "Game presentation not successfully saved"), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
-        logger.info("enter");
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
-        }
-
-        User user = new User(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        user.setRole(Role.ROLE_EMPLOYEE);
-
-        User result = userRepository.save(user);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("api/user/me")
-                .buildAndExpand(result.getUsername()).toUri();
-
-        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
+    	gameRepository.findById(1L).ifPresent(game -> {
+        	game.setContent(gamePresentationRequest.getContent());
+        	gameRepository.save(game);
+    	});
+    	
+    	return new ResponseEntity(new ApiResponse(true, "Game presentation successfully saved"), HttpStatus.OK);
+    	
     }
 
     @PostMapping("/signin")
@@ -135,7 +116,7 @@ public class BackofficeController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = tokenProvider.createToken(authentication);
+        String token = jwtTokenUtil.generateToken(loginRequest.getEmail());
 
         return ResponseEntity.ok(new AuthResponse(token));
     }
@@ -213,4 +194,62 @@ public class BackofficeController {
        }
        return new ResponseEntity(new ApiResponse(false, "Gain not approved"), HttpStatus.BAD_REQUEST);
     }
+    
+    @GetMapping("getContactList")
+    public ResponseEntity<Resource> getContactListToCsvFormat() throws IOException {
+    	File file = clientService.getAllSubscribedClientsToCsv();
+    	
+    	Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        return ResponseEntity.ok()
+        		.header("Content-Disposition" , "attachment; filename='" + file.getName() + "'; filename*='" + file.getName() + "'")
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(resource);
+    }
+    
+    @PostMapping("signup/admin")
+    public ResponseEntity<?> signupAdmin(AdminSignupRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
+        }
+
+        Admin user = new Admin(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getPerimetre());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User result = userRepository.save(user);
+
+        return ResponseEntity.ok(result);
+    }
+    
+    @PostMapping("signup/manager")
+    public ResponseEntity<?> signupManager(SignupRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
+        }
+
+        User user = new Employe(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User result = userRepository.save(user);
+
+        return ResponseEntity.ok(result);
+    }
+
+
+    @PostMapping("/signup/employe")
+    public ResponseEntity<?> registerEmploye(@Valid @RequestBody EmployeSignUpRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
+        }
+
+        User user = new Employe(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User result = userRepository.save(user);
+
+        return ResponseEntity.ok(result);
+    }
+    
 }

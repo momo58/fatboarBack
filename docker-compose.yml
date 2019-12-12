@@ -1,8 +1,9 @@
 version: '3.7'
 
 services:
-  fatboar-back-exec:
+  fatboar-back:
     image: fatboar-back:latest
+    container_name: fatboar-back
     depends_on:
       - fatboar-back-database
     environment:
@@ -12,16 +13,17 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=dev"
-      - "traefik.frontend.rule=Host:dev.fatboar.tk"
       - "traefik.port=8080"
       - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:dev-backend.fatboar.tk"
     networks:
       - web
   fatboar-back-database:
     image: mysql:8.0.14
+    container_name: fatboar-db
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=springboot
+      - MYSQL_DATABASE=fatboardb
       - MYSQL_USER=springuser
       - MYSQL_PASSWORD=springuser
     volumes:

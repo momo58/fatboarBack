@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -67,8 +68,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/api/tickets/**","/api/auth/**","/api/**","/admin/**").permitAll()
-                .antMatchers("/admin/signup").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/admin/signup").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/tickets/insertTickets", "/admin/introducethegame").hasAuthority("SUPER_ADMIN")
+                .antMatchers(HttpMethod.GET, "/admin/getContactList").hasAuthority("SUPER_ADMIN")
+                .antMatchers("/api/tickets/**","/api/auth/**","/api/**","/admin/**", "/client/**", "/misc/**").permitAll()
                 .anyRequest()
                          .authenticated()
                          .and()
