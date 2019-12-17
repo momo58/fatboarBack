@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.models.Client;
+import com.pfa.fatboar.FatboarBack.models.Game;
 import com.pfa.fatboar.FatboarBack.models.User;
+import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
 import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
@@ -36,6 +38,9 @@ public class UserController {
     
     @Autowired
     ClientService clientService;
+    
+    @Autowired
+    GameRepository gameRepository;
 
     @GetMapping("/home")
     public String loadHomePage() {
@@ -74,14 +79,15 @@ public class UserController {
      * Returns the user who win for the Evoque
      * NB: to correct with only users with rolename client and I have to config the detail when I save a new G/FB user
      * @return
+     * @throws Exception 
      */
-    @GetMapping("youwin")
-    public ResponseEntity<?> youWin() {
-        try {
-            User theWinner = userService.getTheUserWhoWin();
-            return ResponseEntity.status(HttpStatus.OK).body(theWinner);
-        } catch (AppException e) {
+    @GetMapping("whoWon")
+    public ResponseEntity<?> youWin() throws Exception {
+    	Game game = gameRepository.findById(Game.THE_GAME_ID).orElseThrow(() -> new Exception("Pas de jeu ?????"));
+    	if (game.getWinner() == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
+    	} else {
+            return ResponseEntity.status(HttpStatus.OK).body(game.getWinner());
+    	}
     }
 }

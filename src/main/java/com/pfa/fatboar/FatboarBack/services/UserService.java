@@ -3,6 +3,7 @@ package com.pfa.fatboar.FatboarBack.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,11 @@ import org.springframework.stereotype.Service;
 import com.pfa.fatboar.FatboarBack.controllers.TicketController;
 import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.exception.ResourceNotFoundException;
+import com.pfa.fatboar.FatboarBack.models.Client;
+import com.pfa.fatboar.FatboarBack.models.Game;
 import com.pfa.fatboar.FatboarBack.models.User;
+import com.pfa.fatboar.FatboarBack.repositories.ClientRepository;
+import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
 import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
@@ -24,7 +29,13 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+    
+    @Autowired
+    ClientRepository clientRepository;
 
+    @Autowired
+    GameRepository gameRepository;
+    
     public void insertUser(User user) {
         userRepository.save(user);
     }
@@ -61,20 +72,23 @@ public class UserService {
      * Returns the user who win the evoque
      * @return
      */
-    public User getTheUserWhoWin() {
+    public Client getTheUserWhoWin() {
         //sur une liste d'id je sélectionne aléatoirement un
         //recupérer la liste d'id des users dans la base
         Random random = new Random();
-        List<User> users = userRepository.findAll();
+        List<Client> clients = clientRepository.findAll().parallelStream()
+        		.filter(Client::isHasTickets)
+        		.collect(Collectors.toList());
 
-        User winner = users.get(random.nextInt(users.size()));
+        Client winner = clients.get(random.nextInt(clients.size()));
 
         return winner;
-       /* List<Long> usersIds = new ArrayList<>();
-        for (User u : users) {
-            usersIds.add(u.getId());
-        }
-
-        usersIds.forEach(u -> System.out.println(u));*/
+    }
+    
+    public void defineWinner() throws Exception {
+    	Game game = gameRepository.findById(Game.THE_GAME_ID).orElseThrow(() -> new Exception("Pas de game ????"));
+    	game.setWinner(getTheUserWhoWin());
+    	gameRepository.save(game);
+    	
     }
 }

@@ -1,5 +1,7 @@
 package com.pfa.fatboar.FatboarBack.models;
 
+import java.util.Date;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,6 +15,11 @@ public class Game {
     private  Long id;
     @Lob
     private String content;
+    
+    private Date dateFinConcours;
+    
+    @OneToOne
+    private Client winner;
 
     public Game() {
     }
@@ -31,5 +38,21 @@ public class Game {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public Date getDateFinConcours() {
+		return dateFinConcours;
+	}
+
+	public void setDateFinConcours(Date dateFinConcours) {
+		this.dateFinConcours = dateFinConcours;
+	}
+
+	public Client getWinner() {
+		return winner;
+	}
+
+	public void setWinner(Client winner) {
+		this.winner = winner;
 	}
 }

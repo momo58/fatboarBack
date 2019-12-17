@@ -5,7 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
@@ -36,14 +42,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.models.Admin;
 import com.pfa.fatboar.FatboarBack.models.Employe;
+import com.pfa.fatboar.FatboarBack.models.Game;
 import com.pfa.fatboar.FatboarBack.models.Manager;
-import com.pfa.fatboar.FatboarBack.models.Role;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.payload.AdminSignupRequest;
 import com.pfa.fatboar.FatboarBack.payload.ApiResponse;
 import com.pfa.fatboar.FatboarBack.payload.AuthResponse;
 import com.pfa.fatboar.FatboarBack.payload.EmailingRequest;
+import com.pfa.fatboar.FatboarBack.payload.FinConcoursRequest;
 import com.pfa.fatboar.FatboarBack.payload.GamePresentationRequest;
 import com.pfa.fatboar.FatboarBack.payload.LoginRequest;
 import com.pfa.fatboar.FatboarBack.repositories.AdminRepository;
@@ -57,6 +64,7 @@ import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 import com.pfa.fatboar.FatboarBack.services.ClientService;
 import com.pfa.fatboar.FatboarBack.services.TicketService;
 import com.pfa.fatboar.FatboarBack.services.UserService;
+import com.pfa.fatboar.FatboarBack.services.ServiceImpl.GameScheduledSingleton;
 import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
 import com.pfa.fatboar.FatboarBack.utils.PasswordUtils;
 
@@ -104,6 +112,35 @@ public class BackofficeController {
     
     @Autowired
     EmployeRepository employeRepository;
+    
+    @javax.annotation.Resource
+    GameScheduledSingleton gameScheduledSingleton;
+    
+    @PutMapping("/defineEndOfConcours")
+    public ResponseEntity<?> defineEndOfConcours(@RequestBody FinConcoursRequest req) throws Exception {
+    	Date dateFin = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(req.getDateFin() + " " + req.getHeureFin());
+    	Game game = gameRepository.findById(Game.THE_GAME_ID).orElseThrow(() -> new Exception("Pas de game ????"));
+    	game.setDateFinConcours(dateFin);
+    	gameRepository.save(game);
+    	
+    	ScheduledExecutorService executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
+    	ScheduledFuture<?> futur = executor.schedule(() -> {
+			try {
+				userService.defineWinner();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}, (dateFin.getTime() - new Date().getTime())/1000, TimeUnit.SECONDS);
+    	
+    	gameScheduledSingleton.tasks.forEach(task -> {
+    		task.cancel(true);
+    	});
+    	gameScheduledSingleton.tasks.clear();
+    	gameScheduledSingleton.tasks.add(futur);
+    	
+    	return ResponseEntity.ok("Dates modifiées");
+    }
 
     /**
      * Accessible only by Admin
