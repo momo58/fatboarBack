@@ -8,7 +8,7 @@ INSERT IGNORE INTO gains (id, label) VALUES
 (6, 'Range Rover Evoque');
 
 --Insertion de l'administrateur du jeu concours
-INSERT IGNORE INTO utilisateurs values (1, 'superadmin', null, '$2a$10$nUPHp/wkeKy1P20lnF3y4uFFlh8soXSkk2tqK9cnnPX4MkggsQAsG', 0, null, 'superadmin');
+INSERT IGNORE INTO utilisateurs values (1, 'superadmin', null, '$2a$10$nUPHp/wkeKy1P20lnF3y4uFFlh8soXSkk2tqK9cnnPX4MkggsQAsG', 0, null, 'superadmin', 'superadmin');
 
 --Insertion de la présentation du jeu concours
 INSERT IGNORE INTO game (id, content) values (1, 'Jeu concours fatboar à administrer');

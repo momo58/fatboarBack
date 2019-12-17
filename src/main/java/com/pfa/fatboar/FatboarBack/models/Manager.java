@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 public class Manager extends User {
 	
 	private String restaurant;
+	private String perimetre;
 
 	@Override
 	public Role getRole() {
@@ -18,6 +19,14 @@ public class Manager extends User {
 
 	public void setRestaurant(String restaurant) {
 		this.restaurant = restaurant;
+	}
+
+	public String getPerimetre() {
+		return perimetre;
+	}
+
+	public void setPerimetre(String perimetre) {
+		this.perimetre = perimetre;
 	}
 
 }

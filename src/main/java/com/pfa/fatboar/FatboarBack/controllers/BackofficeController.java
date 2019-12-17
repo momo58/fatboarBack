@@ -25,8 +25,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,17 +36,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pfa.fatboar.FatboarBack.exception.AppException;
 import com.pfa.fatboar.FatboarBack.models.Admin;
 import com.pfa.fatboar.FatboarBack.models.Employe;
+import com.pfa.fatboar.FatboarBack.models.Manager;
+import com.pfa.fatboar.FatboarBack.models.Role;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
 import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.payload.AdminSignupRequest;
 import com.pfa.fatboar.FatboarBack.payload.ApiResponse;
 import com.pfa.fatboar.FatboarBack.payload.AuthResponse;
 import com.pfa.fatboar.FatboarBack.payload.EmailingRequest;
-import com.pfa.fatboar.FatboarBack.payload.EmployeSignUpRequest;
 import com.pfa.fatboar.FatboarBack.payload.GamePresentationRequest;
 import com.pfa.fatboar.FatboarBack.payload.LoginRequest;
-import com.pfa.fatboar.FatboarBack.payload.SignupRequest;
+import com.pfa.fatboar.FatboarBack.repositories.AdminRepository;
+import com.pfa.fatboar.FatboarBack.repositories.EmployeRepository;
 import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
+import com.pfa.fatboar.FatboarBack.repositories.ManagerRepository;
 import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
@@ -53,6 +58,7 @@ import com.pfa.fatboar.FatboarBack.services.ClientService;
 import com.pfa.fatboar.FatboarBack.services.TicketService;
 import com.pfa.fatboar.FatboarBack.services.UserService;
 import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
+import com.pfa.fatboar.FatboarBack.utils.PasswordUtils;
 
 @RestController
 @RequestMapping("/admin")
@@ -89,6 +95,15 @@ public class BackofficeController {
 
     @Autowired
     TicketRepository ticketRepository;
+    
+    @Autowired
+    AdminRepository adminRepository;
+    
+    @Autowired
+    ManagerRepository managerRepository;
+    
+    @Autowired
+    EmployeRepository employeRepository;
 
     /**
      * Accessible only by Admin
@@ -209,47 +224,100 @@ public class BackofficeController {
                 .body(resource);
     }
     
-    @PostMapping("signup/admin")
-    public ResponseEntity<?> signupAdmin(AdminSignupRequest signupRequest) {
+    /* GESTION DES ADMINISTRATEURS */
+    
+    @GetMapping("admins")
+    public ResponseEntity<?> getAllAdmins() {
+    	return ResponseEntity.ok(adminRepository.findAll());
+    }
+    
+    @PutMapping("admin")
+    public ResponseEntity<?> createAdmin(@RequestBody AdminSignupRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
         }
 
         Admin user = new Admin(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getPerimetre());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setClearPwd(PasswordUtils.getPassword(8));
+        user.setPassword(passwordEncoder.encode(user.getClearPwd()));
 
         User result = userRepository.save(user);
 
         return ResponseEntity.ok(result);
     }
     
-    @PostMapping("signup/manager")
-    public ResponseEntity<?> signupManager(SignupRequest signupRequest) {
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
-        }
-
-        User user = new Employe(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        User result = userRepository.save(user);
-
-        return ResponseEntity.ok(result);
+    @PostMapping("admin")
+    public ResponseEntity<?> updateAdmin(@RequestBody Admin admin) {
+    	return ResponseEntity.ok(adminRepository.save(admin));
     }
+    
+    @DeleteMapping("admin")
+    public ResponseEntity<?> deleteAdmin(@RequestBody Admin admin) {
+    	adminRepository.delete(admin);
+    	return ResponseEntity.ok("L'administrateur a été supprimé");
+    }
+    
+    /* GESTION DES MANAGERS */
+    
+    @GetMapping("managers")
+    public ResponseEntity<List<Manager>> getAllManagers(@CurrentUser UserPrincipal userPrincipal) throws Exception {
+    	Admin admin = adminRepository.findById(userPrincipal.getId()).orElseThrow(() -> new Exception("L'admin n'existe pas en base"));
+    	return ResponseEntity.ok(managerRepository.findAllByPerimetre(admin.getPerimetre()));
+    }
+    
+    @PutMapping("manager")
+    public ResponseEntity<?> createManager(@RequestBody Manager manager, @CurrentUser UserPrincipal userPrincipal) throws Exception {
+    	Admin admin = adminRepository.findById(userPrincipal.getId()).orElseThrow(() -> new Exception("L'admin n'existe pas en base"));
+    	manager.setPerimetre(admin.getPerimetre());
+    	manager.setClearPwd(PasswordUtils.getPassword(8));
+    	manager.setPassword(passwordEncoder.encode(manager.getClearPwd()));
+    	manager.setRole(manager.getRole());
 
+        manager = managerRepository.save(manager);
 
-    @PostMapping("/signup/employe")
-    public ResponseEntity<?> registerEmploye(@Valid @RequestBody EmployeSignUpRequest signupRequest) {
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return new ResponseEntity(new ApiResponse(false, "Email address already in use !"), HttpStatus.BAD_REQUEST);
-        }
+        return ResponseEntity.ok(manager);
+    }
+    
+    @PostMapping("manager")
+    public ResponseEntity<?> updateManager(@RequestBody Manager manager) {
+    	return ResponseEntity.ok(managerRepository.save(manager));
+    }
+    
+    @DeleteMapping("manager")
+    public ResponseEntity<?> deleteManager(@RequestBody Manager manager) {
+    	managerRepository.delete(manager);
+    	return ResponseEntity.ok("Le manager a été supprimé");
+    }
+    
+    /* GESTION DES EMPLOYES */
+    
+    @GetMapping("employes")
+    public ResponseEntity<?> getAllEmployes(@CurrentUser UserPrincipal userPrincipal) throws Exception {
+    	Manager manager = managerRepository.findById(userPrincipal.getId()).orElseThrow(() -> new Exception("Le manager n'existe pas en base"));
+    	return ResponseEntity.ok(employeRepository.findAllByRestaurant(manager.getRestaurant()));
+    }
+    
+    @PutMapping("employe")
+    public ResponseEntity<?> createEmploye(@RequestBody Employe employe, @CurrentUser UserPrincipal userPrincipal) throws Exception {
+    	Manager manager = managerRepository.findById(userPrincipal.getId()).orElseThrow(() -> new Exception("Le manager n'existe pas en base"));
+    	employe.setRestaurant(manager.getRestaurant());
+    	employe.setClearPwd(PasswordUtils.getPassword(8));
+    	employe.setPassword(passwordEncoder.encode(employe.getClearPwd()));
+    	employe.setRole(employe.getRole());
+    	employe = employeRepository.save(employe);
 
-        User user = new Employe(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        User result = userRepository.save(user);
-
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(employe);
+    }
+    
+    @PostMapping("employe")
+    public ResponseEntity<?> updateEmploye(@RequestBody Employe employe) {
+    	return ResponseEntity.ok(employeRepository.save(employe));
+    }
+    
+    @DeleteMapping("employe")
+    public ResponseEntity<?> deleteEmploye(@RequestBody Employe employe) {
+    	employeRepository.delete(employe);
+    	return ResponseEntity.ok("L'employé a été supprimé");
     }
     
 }

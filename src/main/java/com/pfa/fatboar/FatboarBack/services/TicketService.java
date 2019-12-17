@@ -2,6 +2,7 @@ package com.pfa.fatboar.FatboarBack.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -50,7 +51,7 @@ public class TicketService {
      * @return Ticket
      * This method returns a ticket from a number passed as param
      */
-    public Ticket getTicket(String ticketNumber) {
+    public Optional<Ticket> getTicket(String ticketNumber) {
         return ticketRepository.findByTicketNumber(ticketNumber);
     }
 
@@ -67,7 +68,7 @@ public class TicketService {
     @Transactional
     public String handleTicketSubmission(String number, @CurrentUser UserPrincipal userPrincipal) throws Exception {
         //Verifications
-        Ticket ticket = getTicket(number);
+        Ticket ticket = getTicket(number).orElse(null);
         if (ticket == null) {
             throw new AppException("Votre numéro est incorrect.");
         } else if (ticket.getState() > 0 && ticket.getUser().equals(userPrincipal.getId())) {
@@ -95,7 +96,7 @@ public class TicketService {
     @Transactional
     public boolean handleTicketSubmissionByEmployee(String number, @CurrentUser UserPrincipal userPrincipal) throws Exception {
 
-        Ticket ticket = getTicket(number);
+        Ticket ticket = getTicket(number).orElse(null);
         if (ticket == null) {
             throw new AppException("Employee: The ticket you have introduce is not found ! Try again. ");
         } else {

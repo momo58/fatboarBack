@@ -8,8 +8,13 @@ import javax.validation.constraints.Size;
 @Entity
 public class Admin extends User {
 	
+	public Admin() {
+		
+	}
+	
 	public Admin(@NotBlank @Size(max = 40) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String password, String perimetre) {
         super(username, email, password);
+        super.setRole(getRole());
         this.perimetre = perimetre;
     }
 	

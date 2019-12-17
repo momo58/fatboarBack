@@ -28,12 +28,10 @@ services:
       - MYSQL_PASSWORD=springuser
     volumes:
       - dbdata:/var/lib/mysql
-      - backend-logs:/logs
     networks:
       - web
 volumes:
   dbdata:
-  backend-logs:
 networks:
   web:
     external: true

@@ -4,13 +4,17 @@ import javax.persistence.Entity;
 
 @Entity
 public class Employe extends User {
-	
-	private String restaurant;
+
+	public Employe() {
+
+	}
 
 	public Employe(String username, String email, String password) {
 		super(username, email, password);
 		super.setRole(Role.ROLE_EMPLOYE);
 	}
+
+	private String restaurant;
 
 	@Override
 	public Role getRole() {
