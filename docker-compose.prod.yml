@@ -12,8 +12,21 @@ services:
       - backend-logs:./logs
     networks:
       - web
+  fatboar-prod-database:
+    image: mysql:8.0.14
+    container_name: fatboar-prod-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=fatboar_prod_db
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=springuser
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - web
 
 volumes:
+  dbdata:
   backend-logs:
     external:
       name: workflow_prod-backend-logs

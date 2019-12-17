@@ -1,7 +1,9 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
-import javax.validation.Valid;
-
+import com.pfa.fatboar.FatboarBack.models.Client;
+import com.pfa.fatboar.FatboarBack.payload.ApiResponse;
+import com.pfa.fatboar.FatboarBack.payload.SignupRequest;
+import com.pfa.fatboar.FatboarBack.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pfa.fatboar.FatboarBack.models.Client;
-import com.pfa.fatboar.FatboarBack.payload.ApiResponse;
-import com.pfa.fatboar.FatboarBack.payload.SignupRequest;
-import com.pfa.fatboar.FatboarBack.repositories.ClientRepository;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/client")
@@ -28,7 +27,8 @@ public class ClientController {
 	
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest) {
-        if (clientRepository.existsByEmail(signupRequest.getEmail())) {
+
+	    if (clientRepository.existsByEmail(signupRequest.getEmail())) {
             return new ResponseEntity("Cette adresse email est déjà utilisée", HttpStatus.BAD_REQUEST);
         }
 

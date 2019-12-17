@@ -31,6 +31,15 @@ import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
 import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static com.pfa.fatboar.FatboarBack.common.Constants.TICKETS_PER_MULTIPLE;
+
 @Service
 public class TicketService {
 
@@ -145,7 +154,7 @@ public class TicketService {
 	}
 	
     @Async
-	private void doBatchInsertTickets(Set<String> unavailableTicketNumbers, Integer multiple, TicketInsertionBatch batch) {
+	 void doBatchInsertTickets(Set<String> unavailableTicketNumbers, Integer multiple, TicketInsertionBatch batch) {
     	final int numberOfTicketsInserted = ticketRepository.saveAll(IntStream.range(0, multiple).parallel()
 				.mapToObj($ -> generateOneBatch(unavailableTicketNumbers, batch))
 				.flatMap(List::stream)

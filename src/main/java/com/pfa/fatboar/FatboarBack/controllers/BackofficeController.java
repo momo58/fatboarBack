@@ -1,20 +1,17 @@
 package com.pfa.fatboar.FatboarBack.controllers;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
-import javax.validation.Valid;
-
+import com.pfa.fatboar.FatboarBack.exception.AppException;
+import com.pfa.fatboar.FatboarBack.models.*;
+import com.pfa.fatboar.FatboarBack.payload.*;
+import com.pfa.fatboar.FatboarBack.repositories.*;
+import com.pfa.fatboar.FatboarBack.security.CurrentUser;
+import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
+import com.pfa.fatboar.FatboarBack.services.ClientService;
+import com.pfa.fatboar.FatboarBack.services.ServiceImpl.GameScheduledSingleton;
+import com.pfa.fatboar.FatboarBack.services.TicketService;
+import com.pfa.fatboar.FatboarBack.services.UserService;
+import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
+import com.pfa.fatboar.FatboarBack.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,42 +28,21 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.models.Admin;
-import com.pfa.fatboar.FatboarBack.models.Employe;
-import com.pfa.fatboar.FatboarBack.models.Game;
-import com.pfa.fatboar.FatboarBack.models.Manager;
-import com.pfa.fatboar.FatboarBack.models.Ticket;
-import com.pfa.fatboar.FatboarBack.models.User;
-import com.pfa.fatboar.FatboarBack.payload.AdminSignupRequest;
-import com.pfa.fatboar.FatboarBack.payload.ApiResponse;
-import com.pfa.fatboar.FatboarBack.payload.AuthResponse;
-import com.pfa.fatboar.FatboarBack.payload.EmailingRequest;
-import com.pfa.fatboar.FatboarBack.payload.FinConcoursRequest;
-import com.pfa.fatboar.FatboarBack.payload.GamePresentationRequest;
-import com.pfa.fatboar.FatboarBack.payload.LoginRequest;
-import com.pfa.fatboar.FatboarBack.repositories.AdminRepository;
-import com.pfa.fatboar.FatboarBack.repositories.EmployeRepository;
-import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
-import com.pfa.fatboar.FatboarBack.repositories.ManagerRepository;
-import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
-import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
-import com.pfa.fatboar.FatboarBack.security.CurrentUser;
-import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
-import com.pfa.fatboar.FatboarBack.services.ClientService;
-import com.pfa.fatboar.FatboarBack.services.TicketService;
-import com.pfa.fatboar.FatboarBack.services.UserService;
-import com.pfa.fatboar.FatboarBack.services.ServiceImpl.GameScheduledSingleton;
-import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
-import com.pfa.fatboar.FatboarBack.utils.PasswordUtils;
+import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/admin")
@@ -210,7 +186,7 @@ public class BackofficeController {
      * @param emailingRequest
      * @return
      */
-    @PostMapping("send-email")
+    @PostMapping("/send-email")
     public ResponseEntity<?> sendEmails(@RequestBody EmailingRequest emailingRequest) {
 
         SimpleMailMessage mail = new SimpleMailMessage();
@@ -238,7 +214,7 @@ public class BackofficeController {
     /**
      * Permettre aux employe du resto de noter un gain comme reçu
      */
-    @PostMapping("validategain")
+    @PostMapping("/validategain")
     public ResponseEntity<?> validateGainByEmployee(@RequestBody Ticket ticket, @CurrentUser UserPrincipal userPrincipal) throws Exception {
        boolean res = ticketService.handleTicketSubmissionByEmployee(ticket.getTicketNumber(), userPrincipal);
        if (true) {
@@ -247,7 +223,7 @@ public class BackofficeController {
        return new ResponseEntity(new ApiResponse(false, "Gain not approved"), HttpStatus.BAD_REQUEST);
     }
     
-    @GetMapping("getContactList")
+    @GetMapping("/getContactList")
     public ResponseEntity<Resource> getContactListToCsvFormat() throws IOException {
     	File file = clientService.getAllSubscribedClientsToCsv();
     	

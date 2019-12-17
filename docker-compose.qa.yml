@@ -9,3 +9,15 @@ services:
       - "traefik.frontend.rule=Host:preprod-backend.fatboar.tk"
       - "traefik.port=8080"
       - "traefik.docker.network=web"
+  fatboar-qa-database:
+    image: mysql:8.0.14
+    container_name: fatboar-qa-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=fatboar_qa_db
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=springuser
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - web
