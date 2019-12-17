@@ -8,4 +8,16 @@ services:
       - "traefik.frontend.rule=Host:concours-backend.fatboar.tk"
       - "traefik.port=8080"
       - "traefik.docker.network=web"
+    volumes:
+      - backend-logs:./logs
+    networks:
+      - web
 
+volumes:
+  backend-logs:
+    external:
+      name: workflow_prod-backend-logs
+
+networks:
+  web:
+    external: true

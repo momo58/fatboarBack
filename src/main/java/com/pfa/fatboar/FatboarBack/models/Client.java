@@ -25,6 +25,7 @@ public class Client extends User {
 	private List<Ticket> tickets = new ArrayList<>();
 
 	private boolean subscribeToNewsLetters = false;
+	private boolean hasTickets = false;
 
 	@Override
 	public Role getRole() {
@@ -45,6 +46,14 @@ public class Client extends User {
 
 	public void setTickets(List<Ticket> tickets) {
 		this.tickets = tickets;
+	}
+
+	public boolean isHasTickets() {
+		return hasTickets;
+	}
+
+	public void setHasTickets(boolean hasTickets) {
+		this.hasTickets = hasTickets;
 	}
 
 }

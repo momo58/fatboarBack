@@ -68,10 +68,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/admin/signup").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/api/tickets/insertTickets", "/admin/introducethegame").hasAuthority("SUPER_ADMIN")
                 .antMatchers(HttpMethod.GET, "/admin/getContactList").hasAuthority("SUPER_ADMIN")
+                .antMatchers(HttpMethod.GET, "/admin/admins").hasAuthority("SUPER_ADMIN")
+                .antMatchers(HttpMethod.POST, "/admin/admin").hasAuthority("SUPER_ADMIN")
+                .antMatchers(HttpMethod.PUT, "/admin/admin").hasAuthority("SUPER_ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/admin/admin").hasAuthority("SUPER_ADMIN")
+                
+                .antMatchers(HttpMethod.GET, "/admin/managers").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST, "/admin/manager").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/admin/manager").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/admin/manager").hasAuthority("ADMIN")
+                
+                .antMatchers(HttpMethod.GET, "/admin/employes").hasAuthority("MANAGER")
+                .antMatchers(HttpMethod.POST, "/admin/employe").hasAuthority("MANAGER")
+                .antMatchers(HttpMethod.PUT, "/admin/employe").hasAuthority("MANAGER")
+                .antMatchers(HttpMethod.DELETE, "/admin/employe").hasAuthority("MANAGER")
+
+                .antMatchers(HttpMethod.GET, "/api/tickets/employe/**").hasAuthority("EMPLOYE")
+                
                 .antMatchers("/api/tickets/**","/api/auth/**","/api/**","/admin/**", "/client/**", "/misc/**").permitAll()
+                
                 .anyRequest()
                          .authenticated()
                          .and()

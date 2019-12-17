@@ -87,7 +87,7 @@ public class Ticket {
     }
     
     public HistoryGainResponse toHistoryGain() {
-    	return new HistoryGainResponse(this.gain.getLabel(), this.dateValidatedByClient, this.dateValidatedByEmploye);
+    	return new HistoryGainResponse(this.ticketNumber, this.gain.getLabel(), this.dateValidatedByClient, this.dateValidatedByEmploye);
     }
 
     public int getState() {

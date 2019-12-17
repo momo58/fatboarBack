@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pfa.fatboar.FatboarBack.models.Client;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
 import com.pfa.fatboar.FatboarBack.payload.HistoryGainResponse;
 import com.pfa.fatboar.FatboarBack.payload.InsertTicketsRequest;
+import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
 import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 import com.pfa.fatboar.FatboarBack.services.ClientService;
@@ -37,6 +39,9 @@ public class TicketController {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    private TicketRepository ticketRepository;
 
     /**
      * Processes the ticket number submission by the client on the site
@@ -67,6 +72,11 @@ public class TicketController {
     public ResponseEntity<List<HistoryGainResponse>> getUserGains(@CurrentUser UserPrincipal userPrincipal) {
         Client userLoggedIn = clientService.loggedInClient(userPrincipal);
         return ResponseEntity.ok(clientService.findAllGains(userLoggedIn));
+    }
+    
+    @GetMapping("/employe/getTicket")
+    public ResponseEntity<Ticket> getTicket(@RequestParam String ticketNumber) {
+    	return ResponseEntity.of(ticketRepository.findByTicketNumber(ticketNumber));
     }
     
     @PostMapping("/insertTickets")

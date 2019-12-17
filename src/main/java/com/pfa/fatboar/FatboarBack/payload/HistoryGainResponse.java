@@ -5,21 +5,24 @@ import java.util.Date;
 import com.pfa.fatboar.FatboarBack.utils.DateUtils;
 
 public class HistoryGainResponse {
-	
+
 	public HistoryGainResponse() {
 		
 	}
 	
-	public HistoryGainResponse(String gain, Date dateGain, Date dateRecuperation) {
+	public HistoryGainResponse(String ticketNumber, String gain, Date dateGain, Date dateRecuperation) {
 		super();
+		this.setTicketNumber(ticketNumber);
 		this.gain = gain;
 		this.dateGain = DateUtils.formatDate(dateGain);
 		this.dateRecuperation = DateUtils.formatDate(dateRecuperation);
 	}
 
+	private String ticketNumber;
 	private String gain;
 	private String dateGain;
 	private String dateRecuperation;
+	
 	public String getGain() {
 		return gain;
 	}
@@ -41,6 +44,14 @@ public class HistoryGainResponse {
 
 	public void setDateRecuperation(String dateRecuperation) {
 		this.dateRecuperation = dateRecuperation;
+	}
+	
+	public String getTicketNumber() {
+		return ticketNumber;
+	}
+
+	public void setTicketNumber(String ticketNumber) {
+		this.ticketNumber = ticketNumber;
 	}
 
 }

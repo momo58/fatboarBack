@@ -66,6 +66,16 @@ pipeline {
                sh "docker-compose -f docker-compose.yml -f docker-compose.qa.yml up -d"
             }
         }
+        
+        stage('Deploy Fatboar on Production') {
+            when {
+               branch 'master'
+            }
+            steps {
+               pullImageFromNexus(CONTAINER_NAME, CONTAINER_TAG)
+               sh "docker-compose -f docker-compose.prod.yml up -d"
+            }
+        }
     }
 }
 
