@@ -1,17 +1,11 @@
 package com.pfa.fatboar.FatboarBack.oauth2;
 
-import com.pfa.fatboar.FatboarBack.controllers.TicketController;
-import com.pfa.fatboar.FatboarBack.exception.AppException;
-import com.pfa.fatboar.FatboarBack.exception.ResourceNotFoundException;
-import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,13 +14,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
-import static com.pfa.fatboar.FatboarBack.common.Constants.homeUrl;
+import static com.pfa.fatboar.FatboarBack.common.Constants.FRONT_URL;
 
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    // JWT token defaults
+    public static final String TOKEN_HEADER = "Authorization";
+    public static final String TOKEN_PREFIX = "Bearer ";
 
     @Autowired
     private UserRepository userRepository;
@@ -35,19 +31,34 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication)
+            throws IOException, ServletException {
+
         if (response.isCommitted()) {
             return;
         }
-        DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
-        Map<String, Object> attributes = oidcUser.getAttributes();
-        String email = (String) attributes.get("email");
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException("User with email not found"));
-        String token = jwtTokenUtil.generateToken(user);
-        String redirectionUrl = UriComponentsBuilder.fromUriString(homeUrl)
+
+        Object objectPrincipal = authentication.getPrincipal();
+        String email = null;
+
+        if (objectPrincipal instanceof DefaultOidcUser) { // gooogle
+            email = (String) ((DefaultOidcUser) objectPrincipal) .getAttributes().get("email");
+        } else if (objectPrincipal instanceof DefaultOAuth2User) { // facebook
+            email = (String) ((DefaultOAuth2User) objectPrincipal).getAttributes().get("email");
+        } else {
+            throw new IllegalArgumentException("Unknown userPrincipal type.");
+        }
+
+        String token = jwtTokenUtil.generateToken(email);
+
+        String redirectionUrl = UriComponentsBuilder.fromUriString(FRONT_URL)
+
                 .queryParam("auth_token", token)
                 .build().toUriString();
         getRedirectStrategy().sendRedirect(request, response, redirectionUrl);
+
     }
 }

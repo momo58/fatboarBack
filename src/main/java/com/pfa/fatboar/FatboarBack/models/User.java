@@ -1,51 +1,27 @@
 package com.pfa.fatboar.FatboarBack.models;
 
-import org.hibernate.annotations.NaturalId;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {
+@Table(name = "utilisateurs", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"username"}),
         @UniqueConstraint(columnNames = {"email"})
 })
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String username;
-
-    private String password;
-
-    private String sub;
-
-    private String email;
-
-    private String imageUrl;
-
-    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private List<Ticket> tickets;
-
-    @ManyToMany
-    @JoinTable(name = "user_roles",
-                joinColumns = @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
 
     public User() {
     }
-
 
     public User(@NotBlank @Size(max = 40) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String password) {
         this.username = username;
@@ -53,13 +29,17 @@ public class User {
         this.password = password;
     }
 
-    public User(@NotBlank @Size(max = 40) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String imageUrl, List<Ticket> tickets) {
-        this.username = username;
-        this.email = email;
-        this.imageUrl = imageUrl;
-        this.tickets = tickets;
-    }
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String username;
+    private String email;
+    private String password;
+    private String sub;
+    private String imageUrl;
+    private Role role;
+    private String clearPwd;
+    
     public Long getId() {
         return id;
     }
@@ -91,15 +71,7 @@ public class User {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
-    public List<Ticket> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
+    
     public String getPassword() {
         return password;
     }
@@ -116,16 +88,24 @@ public class User {
         this.sub = sub;
     }
 
-     public Set<Role> getRoles() {
-        return roles;
+    public Role getRole() {
+    	return this.role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override
     public String toString() {
         return "Ths user have this id: " + getId();
     }
+
+	public String getClearPwd() {
+		return clearPwd;
+	}
+
+	public void setClearPwd(String clearPwd) {
+		this.clearPwd = clearPwd;
+	}
 }

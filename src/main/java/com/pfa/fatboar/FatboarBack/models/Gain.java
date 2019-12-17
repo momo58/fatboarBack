@@ -4,30 +4,30 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * table qui contient 6 lignes avec tous les gains
+ * @author lourteau
+ *
+ */
 @Entity
 @Table(name = "gains")
 public class Gain {
+	
+	public Gain() {
+		
+	}
+
+    public Gain(@NotBlank @Size(max = 40) String label) {
+        this.label = label;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    @Size(max = 1)
-    private String type;
-
-    @NotBlank
     @Size(max = 40)
     private String label;
-
-    public Gain() {
-    }
-
-    public Gain(@NotBlank @Size(max = 1) String type, @NotBlank @Size(max = 40) String label) {
-        this.type = type;
-        this.label = label;
-
-    }
 
     public Long getId() {
         return id;
@@ -37,14 +37,6 @@ public class Gain {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getLabel() {
         return label;
     }
@@ -52,4 +44,5 @@ public class Gain {
     public void setLabel(String label) {
         this.label = label;
     }
+
 }

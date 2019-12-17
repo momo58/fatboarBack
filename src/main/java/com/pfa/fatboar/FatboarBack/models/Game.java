@@ -1,17 +1,25 @@
 package com.pfa.fatboar.FatboarBack.models;
 
+import java.util.Date;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "game")
 public class Game {
+	
+	public static final Long THE_GAME_ID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
-    private String name;
-    private String header;
-    private String body;
+    @Lob
+    private String content;
+    
+    private Date dateFinConcours;
+    
+    @OneToOne
+    private Client winner;
 
     public Game() {
     }
@@ -24,27 +32,27 @@ public class Game {
         this.id = id;
     }
 
-    public String getHeader() {
-        return header;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public void setHeader(String header) {
-        this.header = header;
-    }
+	public void setContent(String content) {
+		this.content = content;
+	}
 
-    public String getBody() {
-        return body;
-    }
+	public Date getDateFinConcours() {
+		return dateFinConcours;
+	}
 
-    public void setBody(String body) {
-        this.body = body;
-    }
+	public void setDateFinConcours(Date dateFinConcours) {
+		this.dateFinConcours = dateFinConcours;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Client getWinner() {
+		return winner;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setWinner(Client winner) {
+		this.winner = winner;
+	}
 }
