@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -89,14 +91,33 @@ public class BackofficeController {
     @Autowired
     EmployeRepository employeRepository;
     
+    @Autowired
+    TicketInsertionBatchRepository ticketInsertionBatchRepository;
+    
     @javax.annotation.Resource
     GameScheduledSingleton gameScheduledSingleton;
+    
+    @GetMapping("/getAllTicketInsertionBatches")
+    public ResponseEntity<List<TicketInsertionBatch>> getAllBatches() {
+    	return ResponseEntity.ok(ticketInsertionBatchRepository.findAll(new Sort(Direction.DESC, "startedAt")));
+    }
+    
+    @GetMapping("/getDateFinJeuConcours")
+    public ResponseEntity<Date> getDateFinJeuConcours() throws Exception {
+    	Game game = gameRepository.findById(Game.THE_GAME_ID).orElseThrow(() -> new Exception("Pas de game ????"));
+    	if (game.getDateFinConcours() != null) {
+        	return ResponseEntity.ok(game.getDateFinConcours());
+    	} else {
+    		return ResponseEntity.noContent().build();
+    	}
+    }
     
     @PutMapping("/defineEndOfConcours")
     public ResponseEntity<?> defineEndOfConcours(@RequestBody FinConcoursRequest req) throws Exception {
     	Date dateFin = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(req.getDateFin() + " " + req.getHeureFin());
     	Game game = gameRepository.findById(Game.THE_GAME_ID).orElseThrow(() -> new Exception("Pas de game ????"));
     	game.setDateFinConcours(dateFin);
+    	game.setWinner(null);
     	gameRepository.save(game);
     	
     	ScheduledExecutorService executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());

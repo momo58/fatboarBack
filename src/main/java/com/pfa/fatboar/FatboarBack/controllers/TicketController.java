@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pfa.fatboar.FatboarBack.models.Client;
 import com.pfa.fatboar.FatboarBack.models.Ticket;
+import com.pfa.fatboar.FatboarBack.models.TicketInsertionBatch;
 import com.pfa.fatboar.FatboarBack.payload.HistoryGainResponse;
 import com.pfa.fatboar.FatboarBack.payload.InsertTicketsRequest;
 import com.pfa.fatboar.FatboarBack.repositories.TicketRepository;
@@ -80,9 +81,9 @@ public class TicketController {
     }
     
     @PostMapping("/insertTickets")
-    public ResponseEntity<String> batchInsertTickets(@RequestBody InsertTicketsRequest request) {
-    	ticketService.batchInsertTickets(request);
-    	return ResponseEntity.status(200).body("La tâche d'insertion des tickets a débutée");
+    public ResponseEntity<TicketInsertionBatch> batchInsertTickets(@RequestBody InsertTicketsRequest request) {
+    	TicketInsertionBatch batch = ticketService.batchInsertTickets(request);
+    	return ResponseEntity.ok(batch);
     }
 }
 

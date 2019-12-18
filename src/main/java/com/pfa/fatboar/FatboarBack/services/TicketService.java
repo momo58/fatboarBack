@@ -31,15 +31,6 @@ import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
 import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import static com.pfa.fatboar.FatboarBack.common.Constants.TICKETS_PER_MULTIPLE;
-
 @Service
 public class TicketService {
 
@@ -143,18 +134,15 @@ public class TicketService {
         return str;
     }
     
-	public void batchInsertTickets(final InsertTicketsRequest request) {
-    	
+	public TicketInsertionBatch batchInsertTickets(final InsertTicketsRequest request) {
     	final TicketInsertionBatch batch = insertNewBatch(request.getMultiple());
-    	
 		final Set<String> unavailableTicketNumbers = findUnavailableTicketNumbers();
-		
-		doBatchInsertTickets(unavailableTicketNumbers, request.getMultiple(), batch); 
-		
+		doBatchInsertTickets(unavailableTicketNumbers, request.getMultiple(), batch);
+		return batch;
 	}
 	
     @Async
-	 void doBatchInsertTickets(Set<String> unavailableTicketNumbers, Integer multiple, TicketInsertionBatch batch) {
+	public void doBatchInsertTickets(Set<String> unavailableTicketNumbers, Integer multiple, TicketInsertionBatch batch) {
     	final int numberOfTicketsInserted = ticketRepository.saveAll(IntStream.range(0, multiple).parallel()
 				.mapToObj($ -> generateOneBatch(unavailableTicketNumbers, batch))
 				.flatMap(List::stream)
