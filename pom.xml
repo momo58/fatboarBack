@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<sonar.host.url>https://sonarqube.fatboar.tk</sonar.host.url>
-		<sonar.coverage.jacoco.xmlReportPaths>target/jacoco.exec</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/jacoco.exec</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.language>java</sonar.language>
 	</properties>
 
