@@ -1,7 +1,13 @@
 package com.pfa.fatboar.FatboarBack.oauth2;
 
-import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
-import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
@@ -10,16 +16,14 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-import static com.pfa.fatboar.FatboarBack.common.Constants.FRONT_URL;
+import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
+import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
 
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+	
+    public static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
     // JWT token defaults
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
@@ -54,7 +58,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String token = jwtTokenUtil.generateToken(email);
 
-        String redirectionUrl = UriComponentsBuilder.fromUriString(FRONT_URL)
+        logger.info("Redirection vers : " + request.getHeader("referer") == null ? "null" : request.getHeader("referer"));
+        
+        String redirectionUrl = UriComponentsBuilder.fromUriString(request.getHeader("referer"))
 
                 .queryParam("auth_token", token)
                 .build().toUriString();
