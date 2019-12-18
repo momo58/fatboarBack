@@ -5,9 +5,9 @@ services:
     image: fatboar-back:latest
     container_name: fatboar-back
     depends_on:
-      - fatboar-back-database
+      - mysql
     environment:
-      - spring_datasource_url=jdbc:mysql://fatboar-back-database/fatboardb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
+      - spring_datasource_url=jdbc:mysql://mysql:3306/fatboardb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
       - spring_datasource_username=springuser
       - spring_datasource_password=springuser
     labels:
@@ -18,20 +18,7 @@ services:
       - "traefik.frontend.rule=Host:dev-backend.fatboar.tk"
     networks:
       - web
-  fatboar-back-database:
-    image: mysql:8.0.14
-    container_name: fatboar-dev-db
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=fatboardb
-      - MYSQL_USER=springuser
-      - MYSQL_PASSWORD=springuser
-    volumes:
-      - dbdata:/var/lib/mysql
-    networks:
-      - web
-volumes:
-  dbdata:
+
 networks:
   web:
     external: true
