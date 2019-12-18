@@ -4,6 +4,7 @@ import com.pfa.fatboar.FatboarBack.models.User;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,6 +22,9 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 public class UserServiceTest {
 
+    @Autowired
+    UserService userService;
+
     @MockBean
     UserRepository mockUserRepository;
 
@@ -32,8 +36,9 @@ public class UserServiceTest {
 
         when(mockUserRepository.findAll()).thenReturn(users);
 
-        assertThat(users).isNotNull()
-                .isNotEmpty();
+        List<User> result = userService.getUsers();
+
+        assertThat(result).isNotNull().isNotEmpty();
     }
 
 }
