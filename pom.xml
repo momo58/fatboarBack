@@ -17,6 +17,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<sonar.host.url>https://sonarqube.fatboar.tk</sonar.host.url>
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 	</properties>
 
 	<dependencies>
