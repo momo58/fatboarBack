@@ -18,7 +18,7 @@
 		<java.version>1.8</java.version>
 		<sonar.host.url>https://sonarqube.fatboar.tk</sonar.host.url>
 
-		<jacoco.data.file>${project.build.directory}/jacoco.exec</jacoco.data.file>
+		<jacoco.data.file>${project.basedir}/target/jacoco.exec</jacoco.data.file>
 		<jacoco.report.path>${project.reporting.outputDirectory}/jacoco.xml</jacoco.report.path>
 		<sonar.language>java</sonar.language>
 		<sonar.jacoco.reportPaths>${jacoco.data.file}</sonar.jacoco.reportPaths>
@@ -106,6 +106,21 @@
 	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<version>4.3.0</version>
+					<configuration>
+						<jacocoReports>
+							<jacocoReport>${project.reporting.outputDirectory}/jacoco.xml</jacocoReport>
+						</jacocoReports>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -143,6 +158,8 @@
 					</execution>
 				</executions>
 			</plugin>
+
+
 		</plugins>
 	</build>
 
