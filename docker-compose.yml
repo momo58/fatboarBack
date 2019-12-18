@@ -10,6 +10,7 @@ services:
       - spring_datasource_url=jdbc:mysql://fatboar-back-database/fatboardb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
       - spring_datasource_username=springuser
       - spring_datasource_password=springuser
+      - FATBOAR_CALLBACK_BASE_URL=https://dev.fatboar.tk
     labels:
       - "traefik.enable=true"
       - "traefik.backend=dev"
