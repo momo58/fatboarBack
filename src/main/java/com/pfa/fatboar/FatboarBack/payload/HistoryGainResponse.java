@@ -1,8 +1,8 @@
 package com.pfa.fatboar.FatboarBack.payload;
 
-import java.util.Date;
-
 import com.pfa.fatboar.FatboarBack.utils.DateUtils;
+
+import java.util.Date;
 
 public class HistoryGainResponse {
 

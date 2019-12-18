@@ -7,7 +7,7 @@ services:
     depends_on:
       - fatboar-back-database
     environment:
-      - spring_datasource_url=jdbc:mysql://fatboar-back-database/springboot?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
+      - spring_datasource_url=jdbc:mysql://fatboar-back-database/fatboardb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
       - spring_datasource_username=springuser
       - spring_datasource_password=springuser
     labels:
@@ -20,7 +20,7 @@ services:
       - web
   fatboar-back-database:
     image: mysql:8.0.14
-    container_name: fatboar-db
+    container_name: fatboar-dev-db
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=fatboardb
