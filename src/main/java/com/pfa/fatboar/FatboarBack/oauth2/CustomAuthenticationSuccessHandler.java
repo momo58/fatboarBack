@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.pfa.fatboar.FatboarBack.common.Constants;
 import com.pfa.fatboar.FatboarBack.repositories.UserRepository;
 import com.pfa.fatboar.FatboarBack.utilities.JwtTokenUtil;
 
@@ -33,6 +35,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    
+    @Value("${fatboar.callback.base.url}")
+    private String fatboarCallbackBaseUrl;
 
     @Override
     public void onAuthenticationSuccess(
@@ -58,12 +63,10 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String token = jwtTokenUtil.generateToken(email);
 
-        logger.info("Redirection vers : " + request.getHeader("referer") == null ? "null" : request.getHeader("referer"));
-        
-        String redirectionUrl = UriComponentsBuilder.fromUriString(request.getHeader("referer"))
-
+        String redirectionUrl = UriComponentsBuilder.fromUriString(fatboarCallbackBaseUrl)
                 .queryParam("auth_token", token)
                 .build().toUriString();
+        
         getRedirectStrategy().sendRedirect(request, response, redirectionUrl);
 
     }

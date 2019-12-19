@@ -17,6 +17,7 @@ services:
       - MYSQL_DATABASE=fatboar_qa_db
       - MYSQL_USER=springuser
       - MYSQL_PASSWORD=springuser
+      - FATBOAR_CALLBACK_BASE_URL=https://preprod.fatboar.tk
     volumes:
       - dbdata:/var/lib/mysql
     networks:
