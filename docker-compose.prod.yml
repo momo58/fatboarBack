@@ -9,7 +9,7 @@ services:
       - "traefik.port=8080"
       - "traefik.docker.network=web"
     volumes:
-      - backend-logs:./logs
+      - backend-logs:fatboar-back/logs
     networks:
       - web
   fatboar-prod-database:

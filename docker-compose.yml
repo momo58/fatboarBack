@@ -20,7 +20,7 @@ services:
     networks:
       - web
     volumes:
-      - backend-logs:./logs
+      - backend-logs:fatboar-back/logs
   fatboar-back-database:
     image: mysql:8.0.14
     container_name: fatboar-dev-db
