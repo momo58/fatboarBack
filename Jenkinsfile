@@ -52,7 +52,7 @@ pipeline {
                branch 'develop'
             }
             steps {
-                 sh "docker-compose rm -f"
+                 sh "docker-compose down --volumes"
                  sh "docker-compose up -d"
                  echo "Application started"
             }
