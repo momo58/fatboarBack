@@ -8,8 +8,6 @@ services:
       - "traefik.frontend.rule=Host:concours-backend.fatboar.tk"
       - "traefik.port=8080"
       - "traefik.docker.network=web"
-    volumes:
-      - backend-logs:fatboar-back/logs
     networks:
       - web
   fatboar-prod-database:

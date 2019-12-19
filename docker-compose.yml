@@ -19,8 +19,6 @@ services:
       - "traefik.frontend.rule=Host:dev-backend.fatboar.tk"
     networks:
       - web
-    volumes:
-      - backend-logs:fatboar-back/logs
   fatboar-back-database:
     image: mysql:8.0.14
     container_name: fatboar-dev-db
