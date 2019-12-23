@@ -32,7 +32,7 @@ public class ClientController {
             return new ResponseEntity("Cette adresse email est déjà utilisée", HttpStatus.BAD_REQUEST);
         }
 
-        Client client = new Client(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword());
+        Client client = new Client(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getPrenom(), signupRequest.getNom(), signupRequest.isSubscribe());
         client.setPassword(passwordEncoder.encode(client.getPassword()));
 
         clientRepository.save(client);

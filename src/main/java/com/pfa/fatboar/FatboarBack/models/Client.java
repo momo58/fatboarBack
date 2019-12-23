@@ -15,9 +15,13 @@ public class Client extends User {
 		super.setRole(Role.ROLE_CLIENT);
 	}
 
-	public Client(String username, String email, String password) {
+	public Client(String username, String email, String password, String prenom, String nom, boolean subscribeToNewsLetters) {
 		super(username, email, password);
 		super.setRole(Role.ROLE_CLIENT);
+		this.prenom = prenom;
+		this.nom = nom;
+		this.subscribeToNewsLetters = subscribeToNewsLetters;
+		
 	}
 
 	@OneToMany(cascade = CascadeType.ALL)
@@ -26,6 +30,8 @@ public class Client extends User {
 
 	private boolean subscribeToNewsLetters = false;
 	private boolean hasTickets = false;
+	private String prenom;
+	private String nom;
 
 	@Override
 	public Role getRole() {
@@ -54,6 +60,22 @@ public class Client extends User {
 
 	public void setHasTickets(boolean hasTickets) {
 		this.hasTickets = hasTickets;
+	}
+
+	public String getPrenom() {
+		return prenom;
+	}
+
+	public void setPrenom(String prenom) {
+		this.prenom = prenom;
+	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
 	}
 
 }
