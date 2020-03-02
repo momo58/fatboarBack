@@ -14,13 +14,6 @@ pipeline {
             }
         }
 
-        stage('Build Fatboar-back & Unit tests') {
-            steps {
-                sh 'mvn clean verify -DskipITs=true -DargLine="-Dspring.profiles.active=test"'
-                junit '**/target/surefire-reports/TEST-*.xml'
-            }
-        }
-
         stage('Run SonarQube analysis'){
             steps {
                 sh "mvn sonar:sonar \
