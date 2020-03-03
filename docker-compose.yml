@@ -11,6 +11,7 @@ services:
       - spring_datasource_username=springuser
       - spring_datasource_password=springuser
       - FATBOAR_CALLBACK_BASE_URL=https://dev.fatboar.tk
+      - spring_security_oauth2_client_registration_google_redirect-uri=https://dev-backend.fatboar.tk/oauth2/callback/google
     labels:
       - "traefik.enable=true"
       - "traefik.backend=dev"
