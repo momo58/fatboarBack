@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  fatboar-back:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=concours"
+      - "traefik.frontend.rule=Host:concours-backend.fatboar.tk"
+      - "traefik.port=8080"
+      - "traefik.docker.network=web"
+    networks:
+      - web
+  fatboar-prod-database:
+    image: mysql:8.0.14
+    container_name: fatboar-prod-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=fatboar_prod_db
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=springuser
+      - FATBOAR_CALLBACK_BASE_URL=https://concours.fatboar.tk
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - web
+
+volumes:
+  dbdata:
+  backend-logs:
+    external:
+      name: workflow_prod-backend-logs
+
+networks:
+  web:
+    external: true

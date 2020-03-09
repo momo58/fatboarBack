@@ -1,0 +1,24 @@
+#Docker-compose.qa.yml
+version: '3.7'
+
+services:
+  fatboar-back:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=qa"
+      - "traefik.frontend.rule=Host:preprod-backend.fatboar.tk"
+      - "traefik.port=8080"
+      - "traefik.docker.network=web"
+  fatboar-qa-database:
+    image: mysql:8.0.14
+    container_name: fatboar-qa-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=fatboar_qa_db
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=springuser
+      - FATBOAR_CALLBACK_BASE_URL=https://preprod.fatboar.tk
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - web

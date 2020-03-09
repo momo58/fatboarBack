@@ -1,0 +1,16 @@
+BackOfficeController
+/admin/introducethegame
+/admin/signup
+/admin/signin
+/admin/emails
+/admin/send-email
+/admin/validategain
+/admin/clientparticipationstat
+
+UserController
+/api/youwin
+
+
+TicketController
+/api/tickets/handlingpost
+/api/tickets/gainhistory
