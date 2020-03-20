@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pfa.fatboar.FatboarBack.models.Game;
 import com.pfa.fatboar.FatboarBack.repositories.GameRepository;
+import com.pfa.fatboar.FatboarBack.services.MailService;
 
 @RestController
 @RequestMapping("/misc")
