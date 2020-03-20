@@ -7,6 +7,7 @@ import com.pfa.fatboar.FatboarBack.repositories.*;
 import com.pfa.fatboar.FatboarBack.security.CurrentUser;
 import com.pfa.fatboar.FatboarBack.security.UserPrincipal;
 import com.pfa.fatboar.FatboarBack.services.ClientService;
+import com.pfa.fatboar.FatboarBack.services.MailService;
 import com.pfa.fatboar.FatboarBack.services.ServiceImpl.GameScheduledSingleton;
 import com.pfa.fatboar.FatboarBack.services.TicketService;
 import com.pfa.fatboar.FatboarBack.services.UserService;
@@ -93,6 +94,9 @@ public class BackofficeController {
     
     @Autowired
     TicketInsertionBatchRepository ticketInsertionBatchRepository;
+    
+    @Autowired
+    MailService mailService;
     
     @javax.annotation.Resource
     GameScheduledSingleton gameScheduledSingleton;
@@ -272,9 +276,19 @@ public class BackofficeController {
         }
 
         Admin user = new Admin(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getPerimetre());
-        user.setClearPwd(PasswordUtils.getPassword(8));
-        user.setPassword(passwordEncoder.encode(user.getClearPwd()));
-
+        String pwd = PasswordUtils.getPassword(8);
+        user.setPassword(passwordEncoder.encode(pwd));
+    	mailService.sendEmail(user.getEmail(), "Votre nouveau compte pour le site de jeu concours Fatboar",
+    			"Voici vos identifiants : \n"
+    			+ "email : "
+    			+ user.getEmail()
+    			+ "\n"
+    			+ "mot de passe : "
+    			+ pwd
+    			+ "\n"
+    			+ "Veuillez supprimer ce mail après réception et mémoriser votre mot de passe."
+    			+ "\n\n"
+    			+ "Fatboar - jeu concours");
         User result = userRepository.save(user);
 
         return ResponseEntity.ok(result);
@@ -303,11 +317,21 @@ public class BackofficeController {
     public ResponseEntity<?> createManager(@RequestBody Manager manager, @CurrentUser UserPrincipal userPrincipal) throws Exception {
     	Admin admin = adminRepository.findById(userPrincipal.getId()).orElseThrow(() -> new Exception("L'admin n'existe pas en base"));
     	manager.setPerimetre(admin.getPerimetre());
-    	manager.setClearPwd(PasswordUtils.getPassword(8));
-    	manager.setPassword(passwordEncoder.encode(manager.getClearPwd()));
+        String pwd = PasswordUtils.getPassword(8);
+        manager.setPassword(passwordEncoder.encode(pwd));
     	manager.setRole(manager.getRole());
-
-        manager = managerRepository.save(manager);
+    	mailService.sendEmail(manager.getEmail(), "Votre nouveau compte pour le site de jeu concours Fatboar",
+    			"Voici vos identifiants : \n"
+    			+ "email : "
+    			+ manager.getEmail()
+    			+ "\n"
+    			+ "mot de passe : "
+    			+ pwd
+    			+ "\n"
+    			+ "Veuillez supprimer ce mail après réception et mémoriser votre mot de passe."
+    			+ "\n\n"
+    			+ "Fatboar - jeu concours");        
+    	manager = managerRepository.save(manager);
 
         return ResponseEntity.ok(manager);
     }
@@ -335,12 +359,22 @@ public class BackofficeController {
     public ResponseEntity<?> createEmploye(@RequestBody Employe employe, @CurrentUser UserPrincipal userPrincipal) throws Exception {
     	Manager manager = managerRepository.findById(userPrincipal.getId()).orElseThrow(() -> new Exception("Le manager n'existe pas en base"));
     	employe.setRestaurant(manager.getRestaurant());
-    	employe.setClearPwd(PasswordUtils.getPassword(8));
-    	employe.setPassword(passwordEncoder.encode(employe.getClearPwd()));
+        String pwd = PasswordUtils.getPassword(8);
+        employe.setPassword(passwordEncoder.encode(pwd));
     	employe.setRole(employe.getRole());
     	employe = employeRepository.save(employe);
-
-        return ResponseEntity.ok(employe);
+    	mailService.sendEmail(employe.getEmail(), "Votre nouveau compte pour le site de jeu concours Fatboar",
+    			"Voici vos identifiants : \n"
+    			+ "email : "
+    			+ employe.getEmail()
+    			+ "\n"
+    			+ "mot de passe : "
+    			+ pwd
+    			+ "\n"
+    			+ "Veuillez supprimer ce mail après réception et mémoriser votre mot de passe."
+    			+ "\n\n"
+    			+ "Fatboar - jeu concours");
+    	return ResponseEntity.ok(employe);
     }
     
     @PostMapping("employe")

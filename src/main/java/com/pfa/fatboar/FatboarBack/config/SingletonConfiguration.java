@@ -24,8 +24,8 @@ public class SingletonConfiguration {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
          
-        mailSender.setUsername("tonAdresseGmail");
-        mailSender.setPassword("tonMotDePasseGmail");
+        mailSender.setUsername("fatboarf2i@gmail.com");
+        mailSender.setPassword("Fatboar3195&");
          
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

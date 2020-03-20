@@ -38,7 +38,6 @@ public class User {
     private String sub;
     private String imageUrl;
     private Role role;
-    private String clearPwd;
     
     public Long getId() {
         return id;
@@ -100,12 +99,4 @@ public class User {
     public String toString() {
         return "Ths user have this id: " + getId();
     }
-
-	public String getClearPwd() {
-		return clearPwd;
-	}
-
-	public void setClearPwd(String clearPwd) {
-		this.clearPwd = clearPwd;
-	}
 }
